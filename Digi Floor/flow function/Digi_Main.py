@@ -3,8 +3,8 @@ time #(Data sent by the clock component, 1=up, -1=down)retrieve
 sensor1 #(Data sent by the sonic sensors from 2nd floor, -1=Full, 0=Not Full)retrieve
 sensor2 #(Data sent by the sonic sensors from math block, 1=Full, 0=Not Full)retrieve
 light #(Traffic Light Status, if it is still performing its sequence function, 1=performing, 0=not)retrieve
-remote_status #(if the operator placed it on Manual Mode, 1=On, 0=Off)
-remote_order #(Orders Given by the operator, 1=Up, -1=Down)
+remote_status #(if the operator placed it on Manual Mode, 1=On, 0=Off)retrieve
+remote_order #(Orders Given by the operator, 1=Up, -1=Down)retrieve
 command #(Orders to be sent to the light components)send
 status #(Floor Status)send
 
@@ -21,14 +21,16 @@ auto_pilot()
     if light == 0
         priority_count(sensor1, sensor2, time)
         
-        if priority_count == 0
-            send(time)
+        if priority_count() == 0
+            order = time
+            send(order)
 
         else 
-            send(priority_count)
+            order = priority_count()
+            send(order)
 
 manual_pilot()
-    send(remote_order)
+    send(remote_status, remote_order) 
 
 #Main
 retrieve(time, sensor1, sensor2, remote_status)
