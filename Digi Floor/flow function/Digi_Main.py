@@ -33,7 +33,7 @@ manual_pilot()
     send(remote_status, remote_order) 
 
 #Main
-retrieve(time, sensor1, sensor2, remote_status)
+retrieve(time, sensor1, sensor2, remote_status, remote_order)
 
 if remote_status == 1
     manual_pilot()
