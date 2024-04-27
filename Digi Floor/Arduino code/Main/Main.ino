@@ -71,7 +71,7 @@ void sensor_data_assign()
   {
     if (ID_4_1)
     {
-      s_message1 = -1;
+      s_message1 = 1;
     }
     if (ID_4_0)
     {
@@ -82,7 +82,7 @@ void sensor_data_assign()
   {
     if (ID_4_1)
     {
-      s_message2 = 1;
+      s_message2 = -1;
     }
     if (ID_4_0)
     {
@@ -95,7 +95,7 @@ void time_data_assign()
 {
   Find(main_message, ID_4_i1, "1", 9, 1);
   Find(main_message, ID_4_i0, "0", 9, 1);
-  Find(main_message, ID_4_1, "0", 9, 1);
+  Find(main_message, ID_4_1, "1", 10, 1);
   if (ID_4_i1)
   {
     if (ID_4_1)
@@ -134,12 +134,12 @@ void message_verification(std::string message) //in a scenario if anyone tried t
   //the last digit in the number is just a dummy
   //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
   Find(message, ID_1, "01", 0, 2);
-  Find(message, ID_4_1, "1", 9, 1);
-  Find(message, ID_4_0, "0", 9, 1);
+  Find(message, ID_4_i1, "1", 9, 1);
+  Find(message, ID_4_i0, "0", 9, 1);
   Find(message, ID_5_1, "1", 12, 1);
   Find(message, ID_5_0, "0", 12, 1);
   bool class_of_data = false;
-  if (ID_5_0 == ID_4_0 || ID_5_1 == ID_4_1)
+  if (ID_5_0 == ID_4_i0 || ID_5_1 == ID_4_i1)
   {
     if (ID_1) {
       data_verified = true;
