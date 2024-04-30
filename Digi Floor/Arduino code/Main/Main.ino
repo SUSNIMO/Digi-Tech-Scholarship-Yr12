@@ -13,8 +13,8 @@ String Main_order = "";
 int s_message1 = 0;
 int s_message2 = 0;
 int t_message = 0;
-bool calculate_status = true;
-bool data_verified = false;
+bool operations = true;
+bool new_message = false;
 std::string main_message = "";
 int m_4_1;
 int m_4_0;
@@ -57,7 +57,7 @@ void calculate()
   M1_order = "01-04-04-" + M_order + "-04";
   Main_order = M1_order.c_str();
   broadcast(Main_order);
-  calculate_status = true;
+  operations = true;
 }
 
 void sensor_data_assign()
@@ -142,8 +142,10 @@ void message_verification(std::string message) //in a scenario if anyone tried t
   if (ID_5_0 == ID_4_i0 || ID_5_1 == ID_4_i1)
   {
     if (ID_1) {
-      data_verified = true;
+      new_message = true;
       main_message = buffer;
+      Serial.println("Data Verified");
+      Serial.print('\n');
     }
   }
 }
@@ -167,9 +169,7 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
   // debug log the message to the serial port
   Serial.printf("Received message from: %s - %s\n", macStr, buffer);
   // what are our instructions
-  if (calculate_status){
-    message_verification(buffer);
-  }
+  message_verification(buffer);
 }
 
 // callback when data is sent
@@ -177,10 +177,11 @@ void sentCallback(const uint8_t *macAddr, esp_now_send_status_t status)
 {
   char macStr[18];
   formatMacAddress(macAddr, macStr, 18);
-  Serial.print("Last Packet Sent to: ");
-  Serial.println(macStr);
-  Serial.print("Last Packet Send Status: ");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  //Serial.print("Last Packet Sent to: ");
+  //Serial.println(macStr);
+  //Serial.print("Last Packet Send Status: ");
+  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  //Serial.print('\n');
 }
 
 void broadcast(const String &message)
@@ -209,27 +210,27 @@ void broadcast(const String &message)
   }
   else if (result == ESP_ERR_ESPNOW_NOT_INIT)
   {
-    Serial.println("ESPNOW not Init.");
+    //Serial.println("ESPNOW not Init.");
   }
   else if (result == ESP_ERR_ESPNOW_ARG)
   {
-    Serial.println("Invalid Argument");
+    //Serial.println("Invalid Argument");
   }
   else if (result == ESP_ERR_ESPNOW_INTERNAL)
   {
-    Serial.println("Internal Error");
+    //Serial.println("Internal Error");
   }
   else if (result == ESP_ERR_ESPNOW_NO_MEM)
   {
-    Serial.println("ESP_ERR_ESPNOW_NO_MEM");
+    //Serial.println("ESP_ERR_ESPNOW_NO_MEM");
   }
   else if (result == ESP_ERR_ESPNOW_NOT_FOUND)
   {
-    Serial.println("Peer not found.");
+    //Serial.println("Peer not found.");
   }
   else
   {
-    Serial.println("Unknown error");
+    //Serial.println("Unknown error");
   }
 }
 
@@ -265,11 +266,13 @@ void setup()
 
 void loop()
 {
-  if (data_verified)
+  if (new_message)
   {
-    if (calculate_status)
+    new_message = false;
+    if (operations)
     {
-      calculate_status = false;
+      operations = false;
+      main_message = buffer;
       main_data_assign();
       calculate();
     }
