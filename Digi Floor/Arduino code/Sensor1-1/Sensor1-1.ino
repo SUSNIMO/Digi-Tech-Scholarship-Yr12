@@ -43,10 +43,14 @@ void report()
   if (REPORT == 1)
   {
     broadcast("01-01-01-11-11");
+    Serial.println("01-01-01-11-11");
+    Serial.print('\n');
   }
   else 
   {
     broadcast("01-01-01-10-11");
+    Serial.println("01-01-01-10-11");
+    Serial.print('\n');
   }
 }
 
@@ -78,6 +82,8 @@ void sensor(int& led_status)
     digitalWrite(led, LOW);
     led_status = 0;
   }
+  Serial.println(distanceCm);
+  Serial.print('\n');
 }
 
 void operations()
@@ -259,5 +265,4 @@ void loop()
   }
   report();
   wait_for_other = false;
-
 }
