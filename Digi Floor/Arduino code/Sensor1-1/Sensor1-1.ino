@@ -27,12 +27,6 @@ std::string buffer;
 int order = 0;
 bool data_verified = false;
 std::string main_message = "";
-int ID_1;
-int ID_2_1;
-int ID_4_i1;
-int ID_4_i0;
-int ID_5_1;
-int ID_5_0;
 
 void report()
 {
@@ -74,7 +68,7 @@ void sensor(int& led_status)
   // Convert to inches
   distanceInch = distanceCm * CM_TO_INCH;
 
-  if (distanceCm <= 100 ){
+  if (distanceCm <= 60 ){
     digitalWrite(led, HIGH);
     led_status = 1;
   }
@@ -105,42 +99,6 @@ void operations()
   }
 }
 
-void Find(std::string text, int& ID, std::string search, int start, int length)
-{
-  ID = text.find(search.c_str(), start, length);
-  if (ID != std::string::npos) {
-        ID = 1; 
-    } else {
-        ID = 0; 
-    }
-}
-
-void message_verification(std::string message) //in a scenario if anyone tried to infiltrate and tamper with the system
-{
-  //message example: 01-01-02-00-10
-  //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
-  //the last digit in the number is just a dummy
-  //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
-  Find(message, ID_1, "01", 0, 2);
-  Find(main_message, ID_2_1, "01", 3, 2);
-  Find(message, ID_4_i1, "1", 9, 1);
-  Find(message, ID_4_i0, "0", 9, 1);
-  Find(message, ID_5_1, "1", 12, 1);
-  Find(message, ID_5_0, "0", 12, 1);
-  bool class_of_data = false;
-  if (ID_5_0 == ID_4_i0 || ID_5_1 == ID_4_i1)
-  {
-    if (ID_1) {
-      data_verified = true;
-      main_message = buffer;
-      if (ID_2_1)
-      {
-        wait_for_other = true;
-      }
-    }
-  }
-}
-
 void formatMacAddress(const uint8_t *macAddr, char *buffer, int maxLength)
 {
   snprintf(buffer, maxLength, "%02x:%02x:%02x:%02x:%02x:%02x", macAddr[0], macAddr[1], macAddr[2], macAddr[3], macAddr[4], macAddr[5]);
@@ -160,7 +118,6 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
   // debug log the message to the serial port
   Serial.printf("Received message from: %s - %s\n", macStr, buffer);
   // what are our instructions
-  message_verification(buffer);
 }
 
 // callback when data is sent
