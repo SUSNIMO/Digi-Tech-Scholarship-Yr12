@@ -15,6 +15,7 @@ int s_message2 = 0;
 int t_message = 0;
 bool operations = true;
 bool new_message = false;
+bool computer = false;
 std::string main_message = "";
 int m_4_1;
 int m_4_0;
@@ -22,6 +23,7 @@ int ID_1;
 int ID_2_1;
 int ID_2_2;
 int ID_2_3;
+int ID_2_4;
 int ID_3_1;
 int ID_3_2;
 int ID_4_1;
@@ -112,11 +114,35 @@ void time_data_assign()
   }
 }
 
+void operator_command()
+{
+  M1_order = main_message;
+  Main_order = M1_order.c_str();
+  broadcast(Main_order);
+  //exp: 01-04-01-01-01
+  Find(main_message, ID_3_1, "01", 6, 2);
+  Find(main_message, ID_4_1, "01", 9, 2);
+  Find(main_message, ID_4_0, "00", 9, 2);
+  if (ID_3_1)
+  {
+    if (ID_4_0)
+    {
+      computer = false;
+    }
+    if (ID_4_1)
+    {
+      computer = true;
+    }
+  }
+}
+
 void main_data_assign()
 {
+
   Find(main_message, ID_2_1, "01", 3, 2);
   Find(main_message, ID_2_2, "02", 3, 2);
   Find(main_message, ID_2_3, "03", 3, 2);
+  Find(main_message, ID_2_4, "04", 3, 2);
   if (ID_2_1) 
   {
     sensor_data_assign();
@@ -124,6 +150,10 @@ void main_data_assign()
   if (ID_2_2)
   {
     time_data_assign();
+  }
+  if (ID_2_4);
+  {
+    operator_command();
   }
 }
 
@@ -268,13 +298,16 @@ void loop()
 {
   if (new_message)
   {
-    new_message = false;
-    if (operations)
+    if (computer)
     {
-      operations = false;
-      main_message = buffer;
-      main_data_assign();
-      calculate();
+      new_message = false;
+      if (operations)
+      {
+        operations = false;
+        main_message = buffer;
+        main_data_assign();
+        calculate();
+      }
     }
   }
 }
