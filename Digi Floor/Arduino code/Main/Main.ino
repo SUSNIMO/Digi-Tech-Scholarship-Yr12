@@ -50,13 +50,14 @@ void calculate()
   if (order > 0)
   {
     M_order = "1" + converted_order;
+    M1_order = "01-04-04-" + M_order + "-14";
   }
   if (order < 0)
   {
     order = order * (-1);
     M_order = "0" + converted_order;
+    M1_order = "01-04-04-" + M_order + "-04";
   }
-  M1_order = "01-04-04-" + M_order + "-04";
   Main_order = M1_order.c_str();
   broadcast(Main_order);
   operations = true;
