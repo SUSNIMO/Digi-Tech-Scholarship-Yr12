@@ -11,19 +11,6 @@ bool computer = false;
 
 bool new_message = false;
 std::string main_message = "";
-int ID_1;
-int ID_3_1;
-int ID_4_i1;
-int ID_4_i0;
-int ID_4_1;
-int ID_4_0;
-int ID_4_2;
-int ID_5_1;
-int ID_5_0;
-int ID_2_4;
-int ID_3_4;
-int ID_5_4;
-
 
 //Lights
 int led_up = 1;
@@ -69,16 +56,15 @@ void light_down()
   delay(l_order);
 }
 
-void Find(std::string text, int& ID, std::string search, int start, int length)
+bool Find(std::string text, std::string search, int start, int length)
 {
-  ID = text.find(search.c_str(), start, length);
+  int ID = text.find(search.c_str(), start, length);
   if (ID != std::string::npos) {
-        ID = 1; 
+        return true; 
     } else {
-        ID = 0; 
+        return false; 
     }
 }
-
 void assign_order()
 {
   if (ID_4_i1)
@@ -113,66 +99,32 @@ void assign_order()
   }
 }
 
-void operator_command()
-{
-  //exp: 01-04-01-01-01
-  Find(main_message, ID_3_1, "01", 6, 2);
-  Find(main_message, ID_4_1, "01", 9, 2);
-  Find(main_message, ID_4_0, "00", 9, 2);
-  if (ID_3_1)
-  {
-    if (ID_4_0)
-    {
-      computer = false;
-    }
-    if (ID_4_1)
-    {
-      computer = true;
-    }
-  }
-}
-
 void message_verification(std::string message) //in a scenario if anyone tried to infiltrate and tamper with the system
 {
   //message example: 01-01-02-00-10
   //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
   //the last digit in the number is just a dummy
   //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
-  Find(message, ID_1, "01", 0, 2);
-  Find(message, ID_2_4, "04", 3, 2);
-  Find(message, ID_3_1, "01", 6, 2);
-  Find(message, ID_4_i1, "1", 9, 1);
-  Find(message, ID_4_i0, "0", 9, 1);
   Find(message, ID_4_1, "1", 10, 1);
   Find(message, ID_4_0, "0", 10, 1);
-  Find(message, ID_4_2, "2", 10, 1);  
-  Find(message, ID_5_1, "1", 12, 1);
-  Find(message, ID_5_0, "0", 12, 1);
-  Find(message, ID_2_4, "04", 3, 2);
-  Find(message, ID_3_4, "04", 6, 2);
-  Find(message, ID_5_4, "4", 13, 1);
+  Find(message, ID_4_2, "2", 10, 1);
   bool class_of_data = false;
-  if (ID_5_0 == ID_4_i0 || ID_5_1 == ID_4_i1)
+  if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
   {
-    if (ID_1) 
+    if (Find(message, "01", 0, 2)) 
     {
       new_message = true;
-      if (ID_2_4)
+      if (Find(message, "04", 3, 2))
       {
-        if (ID_3_4)
+        if (Find(message, "04", 6, 2))
         {
-          if (ID_5_4)
+          if (Find(message, "4", 13, 1))
           {
             main_message = message;
             Serial.println("Data Verified");
             Serial.print('\n');
             assign_order();
           }
-        }
-        if (ID_3_1)
-        {
-          main_message = message;
-          operator_command();
         }
       }
     }
