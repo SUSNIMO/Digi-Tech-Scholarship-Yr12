@@ -67,32 +67,33 @@ bool Find(std::string text, std::string search, int start, int length)
 }
 void assign_order()
 {
-  if (ID_4_i1)
+  if (Find(message, "1", 9, 1))
   {
-    if (ID_4_1)
+    if (Find(message, "1", 10, 1))
     {
       order = 1;
     }
-    if (ID_4_0)
+    if (Find(message, "0", 10, 1))
     {
       order = 0;
     }
-    if (ID_4_2)
+    if (Find(message, "2", 10, 1))
     {
       order = 2;
     }
   }
-  if (ID_4_i0)
+
+  if (Find(message, "0", 9, 1))
   {
-    if (ID_4_1)
+    if (Find(message, "1", 10, 1))
     {
       order = -1;
     }
-    if (ID_4_0)
+    if (Find(message, "0", 10, 1))
     {
       order = 0;
     }
-    if (ID_4_2)
+    if (Find(message, "2", 10, 1))
     {
       order = -2;
     }
