@@ -16,24 +16,26 @@ String TIME1;
 
 void main_time()
 {
-  seconds = seconds + 1;
-  if (seconds == 60)
+  seconds += 1;
+
+  if (seconds > 60)
   {
     seconds = 0;
     minutes = minutes + 1;
   }
-  if (minutes == 0 && seconds == 0)
+  if (minutes == 0 && seconds > 0)
   {
     broadcast("01-02-00-01-03");
   }
-  if (minutes == 2 && seconds == 30)
+  if (minutes == 2 && seconds > 29)
   {
     broadcast("01-02-00-11-13");
   }
-  if (minutes == 5 && seconds == 1)
+  if (minutes == 5 && seconds > 1)
   {
     reset_time();
   }
+
   minuto = std::to_string(minutes);
   segundo = std::to_string(seconds);
   TIME = minuto + ":" + segundo;
@@ -162,8 +164,5 @@ void setup()
 
 void loop()
 {
-  if (operations)
-  {
-    main_time();
-  }
+  main_time();
 }
