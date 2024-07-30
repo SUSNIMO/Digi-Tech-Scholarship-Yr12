@@ -6,44 +6,76 @@
 
 std::string buffer;
 int order = 0;
-bool operations = true;
-bool computer = false;
 
 bool new_message = false;
 std::string main_message = "";
 
-//Lights
+//Lights pins
 int led_up = 1;
 int led_down = 0;
-int u_order;
-int l_order;
 
+//Lights state
+bool up_ledState = false;
+bool down_ledState = false;
+
+//light time
+unsigned long current_time = 0;
+unsigned long u_order = 0;
+unsigned long l_order = 0;
+
+//Time checker for the lights
+void time_check() {
+  if (current_time > u_order)
+  {
+    up_ledState = !up_ledState;
+  }
+  if (current_time > l_order)
+  {
+    down_ledState = !down_ledState;
+  }
+  digitalWrite(led_up, up_ledState);
+  digitalWrite(led_down, down_ledState);
+}
+
+bool int_check(int number)
+{
+  if (number > 0)
+  {
+    return 1 > 0;
+  }
+  if (number < 0)
+  {
+    return 1 < 0;
+  }
+}
+
+//For how long the light should be on for Up
 void light_up()
 {
-  if (order == -1 || order == -2)
+  if (order < 0)
   {
     u_order = order * -5000;
   }
-  if (order == 1 || order == 2)
+  if (order > 0)
   {
-    u_order = order * 10000;
+    u_order = order * 5000;
   }
   if (order == 0)
   {
     u_order = 5000;
   }
-
-  digitalWrite(led_up, HIGH);
-  delay(u_order);
+  up_ledState = int_check(u_order);
+  digitalWrite(led_up, up_ledState);
 }
 
+//For how long the light should be on for Down
 void light_down()
 {
-  if (order == -1 || order == -2)
+  if (order < 0)
   {
-    l_order = order * -10000;
+    l_order = order * -5000;
   }
-  if (order == 1 || order == 2)
+  if (order > 0)
   {
     l_order = order * 5000;
   }
@@ -52,8 +84,8 @@ void light_down()
     l_order = 5000;
   }
 
-  digitalWrite(led_down, HIGH);
-  delay(l_order);
+  down_ledState = int_check(l_order);
+  digitalWrite(led_down, down_ledState);
 }
 
 bool Find(std::string text, std::string search, int start, int length)
@@ -65,35 +97,36 @@ bool Find(std::string text, std::string search, int start, int length)
         return false; 
     }
 }
+
 void assign_order()
 {
-  if (Find(message, "1", 9, 1))
+  if (Find(main_message, "1", 9, 1))
   {
-    if (Find(message, "1", 10, 1))
+    if (Find(main_message, "1", 10, 1))
     {
       order = 1;
     }
-    if (Find(message, "0", 10, 1))
+    if (Find(main_message, "0", 10, 1))
     {
       order = 0;
     }
-    if (Find(message, "2", 10, 1))
+    if (Find(main_message, "2", 10, 1))
     {
       order = 2;
     }
   }
 
-  if (Find(message, "0", 9, 1))
+  if (Find(main_message, "0", 9, 1))
   {
-    if (Find(message, "1", 10, 1))
+    if (Find(main_message, "1", 10, 1))
     {
       order = -1;
     }
-    if (Find(message, "0", 10, 1))
+    if (Find(main_message, "0", 10, 1))
     {
       order = 0;
     }
-    if (Find(message, "2", 10, 1))
+    if (Find(main_message, "2", 10, 1))
     {
       order = -2;
     }
@@ -106,28 +139,15 @@ void message_verification(std::string message) //in a scenario if anyone tried t
   //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
   //the last digit in the number is just a dummy
   //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
-  Find(message, ID_4_1, "1", 10, 1);
-  Find(message, ID_4_0, "0", 10, 1);
-  Find(message, ID_4_2, "2", 10, 1);
   bool class_of_data = false;
   if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
   {
-    if (Find(message, "01", 0, 2)) 
-    {
+    if (Find(message, "01", 0, 2)) {
       new_message = true;
-      if (Find(message, "04", 3, 2))
-      {
-        if (Find(message, "04", 6, 2))
-        {
-          if (Find(message, "4", 13, 1))
-          {
-            main_message = message;
-            Serial.println("Data Verified");
-            Serial.print('\n');
-            assign_order();
-          }
-        }
-      }
+      main_message = message;
+      Serial.println("Data Verified");
+      Serial.print('\n');
+      assign_order();
     }
   }
 }
@@ -248,14 +268,8 @@ void setup()
 
 void loop()
 {
-  if (computer)
-  {
-    if (operations)
-    {
-      operations = false;
-      light_up();
-      light_down();
-      operations = true;
-    }
-  }
+  current_time = millis();
+  light_up();
+  light_down();
+  time_check();
 }
