@@ -6,17 +6,19 @@
 
 int seconds = -1;
 int minutes = 0;
+int start_time = 0;
 bool operations = true;
 bool time_up_permission = false;
 bool time_down_permission = false;
-std::string segundo = "";
-std::string minuto = "";
 std::string TIME = "";
 String TIME1;
 
 void main_time()
 {
-  seconds += 1;
+  if ((millis() - start_time) > 1000)
+  {
+    seconds++;
+  }
 
   if (seconds > 60)
   {
@@ -36,13 +38,9 @@ void main_time()
     reset_time();
   }
 
-  minuto = std::to_string(minutes);
-  segundo = std::to_string(seconds);
-  TIME = minuto + ":" + segundo;
+  TIME = std::to_string(minutes) + ":" + std::to_string(seconds);
   TIME1 = TIME.c_str();
-  Serial.print(TIME1);
-  Serial.print('\n');
-  delay(1000);
+
 }
 
 void reset_time()
@@ -160,9 +158,12 @@ void setup()
     delay(3000);
     ESP.restart();
   }
+
+  start_time = millis();
 }
 
 void loop()
 {
   main_time();
+  Serial.println(TIME1);
 }
