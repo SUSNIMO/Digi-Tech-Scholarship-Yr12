@@ -7,7 +7,6 @@
 std::string buffer;
 int order = 0;
 
-bool new_message = false;
 std::string main_message = "";
 
 //Lights pins
@@ -25,16 +24,12 @@ unsigned long l_order = 0;
 
 //Time checker for the lights
 void time_check() {
-  if ((millis() - start_time) > u_order)
+  if ((millis() - start_time) > u_order || (millis() - start_time) > (u_order * -1))
   {
     up_ledState = !up_ledState;
-  }
-  if ((millis() - start_time) > l_order)
-  {
     down_ledState = !down_ledState;
+    start_time = millis();
   }
-  digitalWrite(led_up, up_ledState);
-  digitalWrite(led_down, down_ledState);
 }
 
 bool int_check(int number)
@@ -52,40 +47,15 @@ bool int_check(int number)
 //For how long the light should be on for Up
 void light_up()
 {
-  if (order < 0)
-  {
-    u_order = order * -5000;
-  }
-  if (order > 0)
-  {
-    u_order = order * 5000;
-  }
-  if (order == 0)
-  {
-    u_order = 5000;
-  }
+  u_order = order * 5000;
   up_ledState = int_check(u_order);
-  digitalWrite(led_up, up_ledState);
 }
 
 //For how long the light should be on for Down
 void light_down()
 {
-  if (order < 0)
-  {
-    l_order = order * -5000;
-  }
-  if (order > 0)
-  {
-    l_order = order * 5000;
-  }
-  if (order == 0)
-  {
-    l_order = 5000;
-  }
-
+  l_order = order * -5000;
   down_ledState = int_check(l_order);
-  digitalWrite(led_down, down_ledState);
 }
 
 bool Find(std::string text, std::string search, int start, int length)
@@ -132,6 +102,9 @@ void assign_order()
     }
   }
 
+  light_down();
+  light_up();
+
   start_time = millis();
 }
 
@@ -141,11 +114,9 @@ void message_verification(std::string message) //in a scenario if anyone tried t
   //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
   //the last digit in the number is just a dummy
   //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
-  bool class_of_data = false;
   if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
   {
     if (Find(message, "01", 0, 2)) {
-      new_message = true;
       main_message = message;
       Serial.println("Data Verified");
       Serial.print('\n');
@@ -264,13 +235,16 @@ void setup()
     ESP.restart();
   }
   // use the built in button
-  pinMode(0, INPUT_PULLUP);
-  pinMode(2, OUTPUT);
+  pinMode(led_up, OUTPUT);
+  pinMode(led_down, OUTPUT);
+
+  digitalWrite(led_down, down_ledState);
+  digitalWrite(led_up, up_ledState);
 }
 
 void loop()
 {
-  light_up();
-  light_down();
   time_check();
+  digitalWrite(led_down, down_ledState);
+  digitalWrite(led_up, up_ledState);
 }
