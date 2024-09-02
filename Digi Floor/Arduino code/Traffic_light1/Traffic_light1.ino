@@ -19,17 +19,17 @@ bool up_ledState = false;
 bool down_ledState = false;
 
 //light time
-unsigned long current_time = 0;
+unsigned long start_time = 0;
 unsigned long u_order = 0;
 unsigned long l_order = 0;
 
 //Time checker for the lights
 void time_check() {
-  if (current_time > u_order)
+  if ((millis() - start_time) > u_order)
   {
     up_ledState = !up_ledState;
   }
-  if (current_time > l_order)
+  if ((millis() - start_time) > l_order)
   {
     down_ledState = !down_ledState;
   }
@@ -131,6 +131,8 @@ void assign_order()
       order = -2;
     }
   }
+
+  start_time = millis();
 }
 
 void message_verification(std::string message) //in a scenario if anyone tried to infiltrate and tamper with the system
@@ -268,7 +270,6 @@ void setup()
 
 void loop()
 {
-  current_time = millis();
   light_up();
   light_down();
   time_check();
