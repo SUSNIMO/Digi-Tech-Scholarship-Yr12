@@ -16,6 +16,7 @@
 std::string f1_data;
 std::string f2_data;
 std::string f3_data;
+std::string T_data;
 
 bool new_message = false;
 std::string main_message = "";
@@ -118,6 +119,22 @@ void sensor_data_assign()
   }
 }
 
+void variable_assign(std::string &status, const std::string &message)
+{
+  if (Find(message, "11", 9, 2))
+  {
+    status = "Up";
+  }
+  if (Find(message, "01", 9, 2))
+  {
+    status = "Down";
+  }
+  if (Find(message, "00", 9, 2))
+  {
+    status = "None";
+  }
+}
+
 void time_data_assign()
 {
   if (Find(main_message, "1", 9, 1))
@@ -134,18 +151,8 @@ void time_data_assign()
       t_message = -1;
     }
   }
-}
 
-void variable_assign(std::string &status, const std::string &message)
-{
-  if (Find(message, "01", 9, 2))
-  {
-    status = "Up";
-  }
-  if (Find(message, "00", 9, 2))
-  {
-    status = "Down";
-  }
+  variable_assign(T_data, main_message);
 }
 
 void light_data_assign()
@@ -218,6 +225,7 @@ void message_verification(std::string message) //in a scenario if anyone tried t
       main_message = message;
       Serial.println("Data Verified");
       Serial.print('\n');
+      main_data_assign();
     }
   }
 }
@@ -414,7 +422,10 @@ void setup() {
   // just parts of the web page
   server.on("/xml", SendXML);
 
-  server.on("/Command1", SendCommand);
+  server.on("/Command1", Command1);
+  server.on("/Command2", Command2);
+  server.on("/Command3", Command3);
+  server.on("/Timer", Timer);
   // finally begin the server
   server.begin();
 }
@@ -460,17 +471,87 @@ void SendWebsite() {
 
 }
 
-//function to broadcast and process the threshold data that was updated by the web
-void SendCommand() {
+void Timer() {
   // Get the value of the "VALUE" parameter from the request
   String Cdata = server.arg("VALUE");
 
-  // Convert the String to std::string and concatenate
-  std::string Command = "01-04-04-" + std::string(Cdata.c_str()) + "-04";
+  std::string Command;
 
-  // Debug print the Command value
-  Serial.print("Command sent: ");
-  Serial.println(String(Command.c_str()));
+  if (Find(Cdata.c_str(), "0", 0, 1)) 
+  {
+    Command = "01-04-03-" + std::string(Cdata.c_str()) + "-04";
+  }
+  else if (Find(Cdata.c_str(), "1", 0, 1)) 
+  {
+    Command = "01-04-03-" + std::string(Cdata.c_str()) + "-14";
+  }
+
+  // Broadcast the Command value
+  broadcast(String(Command.c_str()));
+
+  // Send an empty response to the client
+  server.send(200, "text/plain", "");
+}
+
+
+void Command1() {
+  // Get the value of the "VALUE" parameter from the request
+  String Cdata = server.arg("VALUE");
+
+  std::string Command;
+
+  if (Find(Cdata.c_str(), "0", 0, 1)) 
+  {
+    Command = "01-04-04-" + std::string(Cdata.c_str()) + "-04";
+  }
+  else if (Find(Cdata.c_str(), "1", 0, 1)) 
+  {
+    Command = "01-04-04-" + std::string(Cdata.c_str()) + "-14";
+  }
+
+  // Broadcast the Command value
+  broadcast(String(Command.c_str()));
+
+  // Send an empty response to the client
+  server.send(200, "text/plain", "");
+}
+
+void Command2() {
+  // Get the value of the "VALUE" parameter from the request
+  String Cdata = server.arg("VALUE");
+
+  std::string Command;
+
+  if (Find(Cdata.c_str(), "0", 0, 1)) 
+  {
+    Command = "02-04-04-" + std::string(Cdata.c_str()) + "-04";
+  }
+  else if (Find(Cdata.c_str(), "1", 0, 1)) 
+  {
+    Command = "02-04-04-" + std::string(Cdata.c_str()) + "-14";
+  }
+
+  // Broadcast the Command value
+  broadcast(String(Command.c_str()));
+
+  // Send an empty response to the client
+  server.send(200, "text/plain", "");
+}
+
+void Command3() {
+  // Get the value of the "VALUE" parameter from the request
+  String Cdata = server.arg("VALUE");
+
+  std::string Command;
+
+  if (Find(Cdata.c_str(), "0", 0, 1)) 
+  {
+    Command = "03-04-04-" + std::string(Cdata.c_str()) + "-04";
+  }
+  else if (Find(Cdata.c_str(), "1", 0, 1)) 
+  {
+    Command = "03-04-04-" + std::string(Cdata.c_str()) + "-14";
+  }
 
   // Broadcast the Command value
   broadcast(String(Command.c_str()));
@@ -495,14 +576,15 @@ void SendXML() {
   sprintf(buf, "<3>%s</3>\n", f3_data.c_str());
   strcat(XML, buf);
 
+  sprintf(buf, "<T>%s</T>\n", T_data.c_str());
+  strcat(XML, buf);
+
   strcat(XML, "</Data>\n");
   
   //print the result above
   Serial.println(XML);
 
   server.send(200, "text/xml", XML);
-
-
 }
 
 

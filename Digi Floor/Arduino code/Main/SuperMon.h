@@ -206,26 +206,41 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 					<th colspan="1"><div class="heading">Locations</div></th>
 					<th colspan="1"><div class="heading">Status</div></th>
 					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
 				</tr>
 				<tr>
 					<td class="colum"><div class="bodytext">3rd Floor</div></td>
 					<td class="colum"><div class="tabledata" id = "3fu">Up</div></td>
 					<td class="colum"><div class="tabledata" id = "3fd">Down</div></td>
+					<td class="colum"><button onclick="Command_Light(3, 11)">Up</button></td>
+					<td class="colum"><button onclick="Command_Light(3, 01)">Down</button></td>
+					<td class="colum"><button onclick="Command_Light(3, 00)">Off</button></td>
 				</tr>
 				<tr>
 					<td class="colum"><div class="bodytext">2nd Floor</div></td>
 					<td class="colum"><div class="tabledata" id = "2fu">Up</div></td>
 					<td class="colum"><div class="tabledata" id = "2fd">Down</div></td>
+					<td class="colum"><button onclick="Command_Light(2, 11)">Up</button></td>
+					<td class="colum"><button onclick="Command_Light(2, 01)">Down</button></td>
+					<td class="colum"><button onclick="Command_Light(2, 00)">Off</button></td>
 				</tr>
 				<tr>
 					<td class="colum"><div class="bodytext">1st Floor</div></td>
 					<td class="colum"><div class="tabledata" id = "1fu">Up</div></td>
 					<td class="colum"><div class="tabledata" id = "1fd">Down</div></td>
+					<td class="colum"><button onclick="Command_Light(1, 11)">Up</button></td>
+					<td class="colum"><button onclick="Command_Light(1, 01)">Down</button></td>
+					<td class="colum"><button onclick="Command_Light(1, 00)">Off</button></td>
 				</tr>
 				<tr>
 					<td class="colum"><div class="bodytext">Timer</div></td>
+					<td class="colum"><div class="tabledata" id = "Tfu">Up</div></td>
+					<td class="colum"><div class="tabledata" id = "Tfd">Down</div></td>
+					<td class="colum"><button onclick="Command_Time(1)">Start</button></td>
+					<td class="colum"><button onclick="Command_Time(0)">Stop</button></td>
 					<td class="colum"><div class="tabledata" id = "t"></div></td>
-					<td class="colum"></td>
 				</tr>
 			</table>
 		</div>
@@ -247,10 +262,12 @@ document.getElementById("t").innerHTML = x;
 	var d1 = "Up";
 	var d2 = "Down";
 	var d3 = "Up";
+	var T = "Down";
 	
 	status_update("1", d1);
 	status_update("2", d2);
 	status_update("3", d3);
+	status_update("T", T);
 
 
 
@@ -272,6 +289,7 @@ document.getElementById("t").innerHTML = x;
 		return xmlHttp;
     }
 	
+	//command the light on the their updated status
 	function Command_Light(ID, Data) {
 		
 		if (ID == 1) {
@@ -293,6 +311,12 @@ document.getElementById("t").innerHTML = x;
 		}
     }
 	
+	function Command_Time(Data) {
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("PUT", "Timer?VALUE="+Data, true);
+		xhttp.send();
+	}
+	
 	function Credits() {
 		alert("Credits to the following people on the Team \n \n-Matthew Misa \n \n 'This was really fun to work with and we hope that people will solve problems'");
 	}
@@ -300,14 +324,18 @@ document.getElementById("t").innerHTML = x;
 	function status_update(ID, Data) {
 		Up = ID + "fu";
 		Down = ID + "fd";
-		
+
 		if (Data == "Up"){
 			document.getElementById(Up).style.backgroundColor = "green";
 			document.getElementById(Down).style.backgroundColor = "red";
 		}
-		else {
+		if (Data == "Down"){
 			document.getElementById(Up).style.backgroundColor = "red";
 			document.getElementById(Down).style.backgroundColor = "green";
+		}
+		if (Data == "None"){
+			document.getElementById(Up).style.backgroundColor = "gray";
+			document.getElementById(Down).style.backgroundColor = "gray";
 		}
 	}
 	
@@ -346,6 +374,10 @@ document.getElementById("t").innerHTML = x;
 		message = xmldoc[0].firstChild.nodeValue;
 		status_update("3", message);
 		
+		//timer 
+		xmldoc = xmlResponse.getElementsByTagName("T");
+		message = xmldoc[0].firstChild.nodeValue;
+		status_update("T", message);
     }
   
   

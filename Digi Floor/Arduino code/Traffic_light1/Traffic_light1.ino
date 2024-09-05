@@ -117,10 +117,13 @@ void message_verification(std::string message) //in a scenario if anyone tried t
   if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
   {
     if (Find(message, "01", 0, 2)) {
-      main_message = message;
-      Serial.println("Data Verified");
-      Serial.print('\n');
-      assign_order();
+      if (Find(message, "04", 3, 2))
+      {
+        main_message = message;
+        Serial.println("Data Verified");
+        Serial.print('\n');
+        assign_order();
+      }
     }
   }
 }
@@ -245,6 +248,12 @@ void setup()
 void loop()
 {
   time_check();
-  digitalWrite(led_down, down_ledState);
-  digitalWrite(led_up, up_ledState);
+  if (order == 0) {
+    digitalWrite(led_down, LOW);
+    digitalWrite(led_up, LOW);
+  }
+  else {
+    digitalWrite(led_down, down_ledState);
+    digitalWrite(led_up, up_ledState);
+  }
 }
