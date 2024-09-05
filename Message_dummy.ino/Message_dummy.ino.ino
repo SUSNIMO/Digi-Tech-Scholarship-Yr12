@@ -4,6 +4,16 @@
 #include <string>
 #include <iostream>
 
+bool Find(std::string text, std::string search, int start, int length)
+{
+  int ID = text.find(search.c_str(), start, length);
+  if (ID != std::string::npos) {
+        return true; 
+    } else {
+        return false; 
+    }
+}
+
 void formatMacAddress(const uint8_t *macAddr, char *buffer, int maxLength)
 {
   snprintf(buffer, maxLength, "%02x:%02x:%02x:%02x:%02x:%02x", macAddr[0], macAddr[1], macAddr[2], macAddr[3], macAddr[4], macAddr[5]);
@@ -11,18 +21,18 @@ void formatMacAddress(const uint8_t *macAddr, char *buffer, int maxLength)
 
 void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
 {
-  // only allow a maximum of 250 characters in the message + a null terminating byte
   char buffer[ESP_NOW_MAX_DATA_LEN + 1];
   int msgLen = min(ESP_NOW_MAX_DATA_LEN, dataLen);
   strncpy(buffer, (const char *)data, msgLen);
-  // make sure we are null terminated
   buffer[msgLen] = 0;
-  // format the mac address
+
   char macStr[18];
   formatMacAddress(macAddr, macStr, 18);
-  // debug log the message to the serial port
-  Serial.printf("Received message from: %s - %s\n", macStr, buffer);
-  // what are our instructions
+
+  // Convert char buffer to std::string and concatenate
+  std::string message = "M-" + std::string(buffer);
+
+  Serial.println(message.c_str());  // Use .c_str() to convert std::string to const char*
 }
 
 // callback when data is sent
@@ -115,8 +125,15 @@ void setup()
 
 void loop()
 {
-  broadcast("HII");
-  delay(1000);
-  broadcast("01-02-03-01-05");
-  delay(1000);
+  if (Serial.available()) {
+    String incomingData = Serial.readStringUntil('\n');
+    
+    // Check if the message starts with "M-"
+    if (incomingData.startsWith("M-")) {
+      // Process or handle the message if needed
+    } else {
+      // Broadcast the incoming data
+      broadcast(incomingData);
+    }
+  }
 }
