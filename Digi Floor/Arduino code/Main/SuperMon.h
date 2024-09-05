@@ -238,8 +238,8 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 					<td class="colum"><div class="bodytext">Timer</div></td>
 					<td class="colum"><div class="tabledata" id = "Tfu">Up</div></td>
 					<td class="colum"><div class="tabledata" id = "Tfd">Down</div></td>
-					<td class="colum"><button onclick="Command_Time(1)">Start</button></td>
-					<td class="colum"><button onclick="Command_Time(0)">Stop</button></td>
+					<td class="colum"><button onclick="Command_Time(01)">Start</button></td>
+					<td class="colum"><button onclick="Command_Time(00)">Stop</button></td>
 					<td class="colum"><div class="tabledata" id = "t"></div></td>
 				</tr>
 			</table>

@@ -4,6 +4,9 @@
 #include <string>
 #include <iostream>
 
+std::string main_message = "";
+int order = 0;
+
 int seconds = -1;
 int minutes = 0;
 int start_time = 0;
@@ -51,6 +54,46 @@ void reset_time()
   time_down_permission = false;
 }
 
+bool Find(std::string text, std::string search, int start, int length)
+{
+  int ID = text.find(search.c_str(), start, length);
+  if (ID != std::string::npos) {
+        return true; 
+    } else {
+        return false; 
+    }
+}
+
+void order_assign() 
+{
+  if (Find(main_message, "1", 10, 1))
+  {
+    order = 1;
+  }
+  if (Find(main_message, "0", 10, 1))
+  {
+    order = 0;
+  }
+}
+
+void message_verification(std::string message) 
+{
+  if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
+  {
+    if (Find(message, "01", 0, 2))
+    {
+      if (Find(message, "04", 3, 2))
+      {
+        if (Find(message, "03", 6, 2))
+        {
+          main_message = message;
+          order_assign();
+        }
+      }
+    }
+  }
+}
+
 void formatMacAddress(const uint8_t *macAddr, char *buffer, int maxLength)
 {
   snprintf(buffer, maxLength, "%02x:%02x:%02x:%02x:%02x:%02x", macAddr[0], macAddr[1], macAddr[2], macAddr[3], macAddr[4], macAddr[5]);
@@ -70,6 +113,8 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
   // debug log the message to the serial port
   //Serial.printf("Received message from: %s - %s\n", macStr, buffer);
   // what are our instructions
+
+  message_verification(buffer);
 }
 
 // callback when data is sent
@@ -164,6 +209,13 @@ void setup()
 
 void loop()
 {
-  main_time();
-  Serial.println(TIME1);
+  if (order == 1)
+  {
+    main_time();
+    Serial.println(TIME1);
+  }
+  else 
+  {
+    Serial.println("No time!");
+  }
 }
