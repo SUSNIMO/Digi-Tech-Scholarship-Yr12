@@ -291,29 +291,28 @@ document.getElementById("t").innerHTML = x;
 	
 	//command the light on the their updated status
 	function Command_Light(ID, Data) {
-		
-		if (ID == 1) {
-			var xhttp = new XMLHttpRequest();
-			xhttp.open("PUT", "Command1?VALUE="+Data, true);
-			xhttp.send();
-		}
-		
-		if (ID == 2) {
-			var xhttp = new XMLHttpRequest();
-			xhttp.open("PUT", "Command2?VALUE="+Data, true);
-			xhttp.send();
-		}
-		
-		if (ID == 3) {
-			var xhttp = new XMLHttpRequest();
-			xhttp.open("PUT", "Command3?VALUE="+Data, true);
-			xhttp.send();
-		}
+    // Format Data as a two-digit string
+    var formattedData = Data.toString().padStart(2, '0');
+    
+    var xhttp = new XMLHttpRequest();
+    
+    if (ID == 1) {
+        xhttp.open("PUT", "Command1?VALUE=" + formattedData, true);
+    } else if (ID == 2) {
+        xhttp.open("PUT", "Command2?VALUE=" + formattedData, true);
+    } else if (ID == 3) {
+        xhttp.open("PUT", "Command3?VALUE=" + formattedData, true);
     }
+    
+    xhttp.send();
+	}
+
 	
 	function Command_Time(Data) {
+		var formattedData = Data.toString().padStart(2, '0');
+
 		var xhttp = new XMLHttpRequest();
-		xhttp.open("PUT", "Timer?VALUE="+Data, true);
+		xhttp.open("PUT", "Timer?VALUE="+formattedData, true);
 		xhttp.send();
 	}
 	
