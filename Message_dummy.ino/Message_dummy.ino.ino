@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 
+//This code has been chacked to worked already
+
 bool Find(std::string text, std::string search, int start, int length)
 {
   int ID = text.find(search.c_str(), start, length);
