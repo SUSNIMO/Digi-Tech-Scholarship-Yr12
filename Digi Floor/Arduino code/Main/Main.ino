@@ -218,14 +218,19 @@ void message_verification(std::string message) //in a scenario if anyone tried t
   //the last digit in the number is just a dummy
   //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
   bool class_of_data = false;
-  if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
+  if (message.size() > 13) 
   {
-    if (Find(message, "01", 0, 2)) {
+    if ((Find(message, "0", 12, 1) && Find(message, "0", 9, 1)) || (Find(message, "1", 12, 1) && Find(message, "1", 9, 1)))
+    {  
       new_message = true;
       main_message = message;
+      Serial.println();
       Serial.println("Data Verified");
-      Serial.print('\n');
       main_data_assign();
+    }
+    else 
+    {
+      Serial.println("Not Verified");
     }
   }
 }

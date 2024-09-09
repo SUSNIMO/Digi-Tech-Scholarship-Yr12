@@ -133,8 +133,14 @@ void loop()
     // Check if the message starts with "M-"
     if (incomingData.startsWith("M-")) {
       // Process or handle the message if needed
-    } else {
-      // Broadcast the incoming data
+    }
+    else if (incomingData.startsWith("G-")){
+      // Remove the "G-" prefix
+      String messageToBroadcast = incomingData.substring(2); // Get substring starting from index 2
+      broadcast(messageToBroadcast); // Broadcast the remaining message
+    }
+    else {
+      // Broadcast the incoming data if it doesn't start with "M-" or "G-"
       broadcast(incomingData);
     }
   }
