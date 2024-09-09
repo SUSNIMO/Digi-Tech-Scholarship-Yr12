@@ -83,15 +83,23 @@ void compute()
   }
 }
 
-bool Find(std::string text, std::string search, int start, int length)
-{
-  int ID = text.find(search.c_str(), start, length);
-  if (ID != std::string::npos) {
-        return true; 
+bool Find(const std::string& text, const std::string& search, int start, int length) {
+    if (start >= text.length() || length <= 0) {
+        return false; // Invalid parameters
+    }
+    // Ensure length does not exceed the remaining text length
+    length = std::min(length, static_cast<int>(text.length()) - start);
+    
+    size_t found = text.find(search, start);
+    if (found != std::string::npos && found + search.length() <= start + length) {
+        //Serial.print("Found '"); Serial.print(search.c_str()); Serial.print("' at position "); Serial.println(found);
+        return true;
     } else {
-        return false; 
+        //Serial.print("Did not find '"); Serial.print(search.c_str()); Serial.print("' within range starting at "); Serial.println(start);
+        return false;
     }
 }
+
 
 void sensor_data_assign()
 {
@@ -193,19 +201,23 @@ void operator_command()
 
 void main_data_assign()
 {
-  if (Find(main_message, "01", 3, 2)) 
-  {
-    sensor_data_assign();
-  }
+  Serial.println("Main data assign");
   if (Find(main_message, "02", 3, 2))
   {
+    Serial.println("2");
     time_data_assign();
   }
-  if (Find(main_message, "03", 3, 2));
+  if (Find(main_message, "01", 3, 2)) 
   {
+    Serial.println("1");
+    sensor_data_assign();
+  }
+  if (Find(main_message, "03", 3, 2))
+  {
+    Serial.println("3");
     light_data_assign();
   }
-  if (Find(main_message, "04", 3, 2));
+  else if (Find(main_message, "04", 3, 2))
   {
     operator_command();
   }
@@ -217,21 +229,17 @@ void message_verification(std::string message) //in a scenario if anyone tried t
   //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
   //the last digit in the number is just a dummy
   //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
-  bool class_of_data = false;
-  if (message.size() > 13) 
+  bool class_of_data = false; 
+  if ((Find(message, "1", 12, 1) && Find(message, "1", 9, 1)) || (Find(message, "0", 12, 1) && Find(message, "0", 9, 1)))
+  {  
+    new_message = true;
+    main_message = message;
+    Serial.println("Data Verified");
+    main_data_assign();
+  }
+  else 
   {
-    if ((Find(message, "0", 12, 1) && Find(message, "0", 9, 1)) || (Find(message, "1", 12, 1) && Find(message, "1", 9, 1)))
-    {  
-      new_message = true;
-      main_message = message;
-      Serial.println();
-      Serial.println("Data Verified");
-      main_data_assign();
-    }
-    else 
-    {
-      Serial.println("Not Verified");
-    }
+    Serial.println("Not Verified");
   }
 }
 
@@ -256,7 +264,7 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
   // debug log the message to the serial port
   //Serial.printf("Received message from: %s - %s\n", macStr, buffer);
   // what are our instructions
-  //Serial.print(buffer);
+  Serial.println(buffer);
 
   //Verify data
   message_verification(buffer);
