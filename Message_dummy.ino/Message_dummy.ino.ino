@@ -141,7 +141,7 @@ void loop()
     }
     else {
       // Broadcast the incoming data if it doesn't start with "M-" or "G-"
-      broadcast(incomingData);
+      Serial.println("Invalid!");
     }
   }
 }
