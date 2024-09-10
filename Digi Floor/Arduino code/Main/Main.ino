@@ -168,14 +168,17 @@ void light_data_assign()
   //0x-03-00-xx-x0
   if (Find(main_message, "01", 0, 2))
   {
+    Serial.println("F1");
     variable_assign(f1_data, main_message);
   }
   if (Find(main_message, "02", 0, 2))
   {
+    Serial.println("F2");
     variable_assign(f2_data, main_message);
   }
   if (Find(main_message, "03", 0, 2))
   {
+    Serial.println("F3");
     variable_assign(f3_data, main_message);
   }
 }
