@@ -460,7 +460,7 @@ void printWifiStatus() {
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
 
-  // print your WiFi shield's IP address:
+  // print your WiFi shield's IP address:a
   ip = WiFi.localIP();
   Serial.print("IP Address: ");
   Serial.println(ip);
@@ -495,11 +495,11 @@ void Timer() {
 
   if (Find(Cdata.c_str(), "0", 0, 1)) 
   {
-    Command = "01-04-03-" + std::string(Cdata.c_str()) + "-04";
+    Command = "01-04-02-" + std::string(Cdata.c_str()) + "-04";
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "01-04-03-" + std::string(Cdata.c_str()) + "-14";
+    Command = "01-04-02-" + std::string(Cdata.c_str()) + "-14";
   }
 
   // Broadcast the Command value

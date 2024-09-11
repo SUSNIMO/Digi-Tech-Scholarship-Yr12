@@ -54,13 +54,20 @@ void reset_time()
   time_down_permission = false;
 }
 
-bool Find(std::string text, std::string search, int start, int length)
-{
-  int ID = text.find(search.c_str(), start, length);
-  if (ID != std::string::npos) {
-        return true; 
+bool Find(const std::string& text, const std::string& search, int start, int length) {
+    if (start >= text.length() || length <= 0) {
+        return false; // Invalid parameters
+    }
+    // Ensure length does not exceed the remaining text length
+    length = std::min(length, static_cast<int>(text.length()) - start);
+    
+    size_t found = text.find(search, start);
+    if (found != std::string::npos && found + search.length() <= start + length) {
+        //Serial.print("Found '"); Serial.print(search.c_str()); Serial.print("' at position "); Serial.println(found);
+        return true;
     } else {
-        return false; 
+        //Serial.print("Did not find '"); Serial.print(search.c_str()); Serial.print("' within range starting at "); Serial.println(start);
+        return false;
     }
 }
 
@@ -78,13 +85,13 @@ void order_assign()
 
 void message_verification(std::string message) 
 {
-  if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
+  if ((Find(message, "1", 12, 1) && Find(message, "1", 9, 1)) || (Find(message, "0", 12, 1) && Find(message, "0", 9, 1)))
   {
     if (Find(message, "01", 0, 2))
     {
       if (Find(message, "04", 3, 2))
       {
-        if (Find(message, "03", 6, 2))
+        if (Find(message, "02", 6, 2))
         {
           main_message = message;
           order_assign();
@@ -216,6 +223,7 @@ void loop()
   }
   else 
   {
+    reset_time();
     Serial.println("No time!");
   }
 }
