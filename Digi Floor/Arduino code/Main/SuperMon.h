@@ -321,8 +321,9 @@ document.getElementById("t").innerHTML = x;
 	}
 	
 	function status_update(ID, Data) {
-		Up = ID + "fu";
-		Down = ID + "fd";
+
+		let Up = String(ID) + "fu";
+		let Down = String(ID) + "fd";
 
 		if (Data == "Up"){
 			document.getElementById(Up).style.backgroundColor = "green";
@@ -350,7 +351,7 @@ document.getElementById("t").innerHTML = x;
 		var xmlResponse;
 		var xmldoc;
 		var dt = new Date();
-	 
+
 		// get the xml stream
 		xmlResponse=xmlHttp.responseXML;
   
@@ -359,24 +360,24 @@ document.getElementById("t").innerHTML = x;
 		document.getElementById("date").innerHTML = dt.toLocaleDateString();
   
 		// 1st floor status
-		xmldoc = xmlResponse.getElementsByTagName("1");
-		message = xmldoc[0].firstChild.nodeValue;
-		status_update("1", message);
-		
+		xmldoc = xmlResponse.getElementsByTagName("f1");
+		let message1 = xmldoc[0].firstChild.nodeValue;
+		status_update("1", message1);
+
 		// 2nd Floor
-		xmldoc = xmlResponse.getElementsByTagName("2");
-		message = xmldoc[0].firstChild.nodeValue;
-		status_update("2", message);
+		xmldoc = xmlResponse.getElementsByTagName("f2");
+		let message2 = xmldoc[0].firstChild.nodeValue;
+		status_update("2", message2);
 		
 		// 3rd Floor
-		xmldoc = xmlResponse.getElementsByTagName("3");
-		message = xmldoc[0].firstChild.nodeValue;
-		status_update("3", message);
+		xmldoc = xmlResponse.getElementsByTagName("f3");
+		let message3 = xmldoc[0].firstChild.nodeValue;
+		status_update("3", message3);
 		
 		//timer 
-		xmldoc = xmlResponse.getElementsByTagName("T");
-		message = xmldoc[0].firstChild.nodeValue;
-		status_update("T", message);
+		xmldoc = xmlResponse.getElementsByTagName("fT");
+		let message4 = xmldoc[0].firstChild.nodeValue;
+		status_update("T", message4);
     }
   
   

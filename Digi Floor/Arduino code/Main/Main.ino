@@ -13,10 +13,10 @@
 #define AP_SSID "System Command"
 #define AP_PASS "password123"
 
-std::string f1_data;
-std::string f2_data;
-std::string f3_data;
-std::string T_data;
+std::string f1_data = "None";
+std::string f2_data = "None";
+std::string f3_data = "None";
+std::string T_data = "None";
 
 bool new_message = false;
 std::string main_message = "";
@@ -583,16 +583,16 @@ void SendXML() {
 
   strcpy(XML, "<?xml version = '1.0'?>\n<Data>\n");
 
-  sprintf(buf, "<1>%s</1>\n", f1_data.c_str());
+  sprintf(buf, "<f1>%s</f1>\n", f1_data.c_str());
   strcat(XML, buf);
 
-  sprintf(buf, "<2>%s</2>\n", f2_data.c_str());
+  sprintf(buf, "<f2>%s</f2>\n", f2_data.c_str());
   strcat(XML, buf);
 
-  sprintf(buf, "<3>%s</3>\n", f3_data.c_str());
+  sprintf(buf, "<f3>%s</f3>\n", f3_data.c_str());
   strcat(XML, buf);
 
-  sprintf(buf, "<T>%s</T>\n", T_data.c_str());
+  sprintf(buf, "<fT>%s</fT>\n", T_data.c_str());
   strcat(XML, buf);
 
   strcat(XML, "</Data>\n");
