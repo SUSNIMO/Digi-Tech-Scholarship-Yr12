@@ -81,6 +81,8 @@ void order_assign()
   {
     order = 0;
   }
+
+  start_time = millis();
 }
 
 void message_verification(std::string message) 
@@ -210,8 +212,6 @@ void setup()
     delay(3000);
     ESP.restart();
   }
-
-  start_time = millis();
 }
 
 void loop()
@@ -227,3 +227,5 @@ void loop()
     Serial.println("No time!");
   }
 }
+
+//switches too fast!
