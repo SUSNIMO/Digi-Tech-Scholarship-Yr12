@@ -10,8 +10,8 @@ int order = 0;
 std::string main_message = "";
 
 //Lights pins
-int led_up = 19;
-int led_down = 18;
+int led_up = 26;
+int led_down = 27;
 
 //Lights state
 bool up_ledState = false;
@@ -21,26 +21,32 @@ bool down_ledState = false;
 unsigned long start_time = 0;
 unsigned long u_order = 0;
 unsigned long l_order = 0;
+int send = 0;
 
 void update()
 {
-  if (order == 0)
+  if ((millis() - send) > 100)
   {
-    broadcast("01-03-00-00-00");
-    Serial.print("OFF");
-  }
-  else
-  {
-    if (up_ledState)
+    if (order == 0)
     {
-      broadcast("01-03-00-11-10");
-      Serial.print("Up!");
+      broadcast("01-03-00-00-00");
+      Serial.print("OFF");
     }
     else
     {
-      broadcast("01-03-00-01-01");
-      Serial.print("Down!");
+      if (up_ledState)
+      {
+        broadcast("01-03-00-11-10");
+        Serial.print("Up!");
+      }
+      else
+      {
+        broadcast("01-03-00-01-01");
+        Serial.print("Down!");
+      }
     }
+
+    send = millis();
   }
 }
 
