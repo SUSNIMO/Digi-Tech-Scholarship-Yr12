@@ -10,8 +10,8 @@ int order = 0;
 std::string main_message = "";
 
 //Lights pins
-int led_up = 1;
-int led_down = 0;
+int led_up = 19;
+int led_down = 18;
 
 //Lights state
 bool up_ledState = false;
@@ -58,13 +58,20 @@ void light_down()
   down_ledState = int_check(l_order);
 }
 
-bool Find(std::string text, std::string search, int start, int length)
-{
-  int ID = text.find(search.c_str(), start, length);
-  if (ID != std::string::npos) {
-        return true; 
+bool Find(const std::string& text, const std::string& search, int start, int length) {
+    if (start >= text.length() || length <= 0) {
+        return false; // Invalid parameters
+    }
+    // Ensure length does not exceed the remaining text length
+    length = std::min(length, static_cast<int>(text.length()) - start);
+    
+    size_t found = text.find(search, start);
+    if (found != std::string::npos && found + search.length() <= start + length) {
+        //Serial.print("Found '"); Serial.print(search.c_str()); Serial.print("' at position "); Serial.println(found);
+        return true;
     } else {
-        return false; 
+        //Serial.print("Did not find '"); Serial.print(search.c_str()); Serial.print("' within range starting at "); Serial.println(start);
+        return false;
     }
 }
 
@@ -102,6 +109,8 @@ void assign_order()
     }
   }
 
+  Serial.println(order);
+
   light_down();
   light_up();
 
@@ -121,7 +130,6 @@ void message_verification(std::string message) //in a scenario if anyone tried t
       {
         main_message = message;
         Serial.println("Data Verified");
-        Serial.print('\n');
         assign_order();
       }
     }
@@ -147,6 +155,7 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
   // debug log the message to the serial port
   Serial.printf("Received message from: %s - %s\n", macStr, buffer);
   // what are our instructions
+  Serial.println(buffer);
   message_verification(buffer);
 }
 
