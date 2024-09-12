@@ -10,8 +10,8 @@ int order = 0;
 std::string main_message = "";
 
 //Lights pins
-int led_up = 19;
-int led_down = 18;
+int led_up = 26;
+int led_down = 27;
 
 //Lights state
 bool up_ledState = false;
@@ -26,19 +26,19 @@ void update()
 {
   if (order == 0)
   {
-    broadcast("01-03-00-00-00");
+    broadcast("02-03-00-00-00");
     Serial.print("OFF");
   }
   else
   {
     if (up_ledState)
     {
-      broadcast("01-03-00-11-10");
+      broadcast("02-03-00-11-10");
       Serial.print("Up!");
     }
     else
     {
-      broadcast("01-03-00-01-01");
+      broadcast("02-03-00-01-01");
       Serial.print("Down!");
     }
   }
@@ -147,7 +147,7 @@ void message_verification(std::string message) //in a scenario if anyone tried t
   //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
   if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
   {
-    if (Find(message, "01", 0, 2)) {
+    if (Find(message, "02", 0, 2)) {
       if (Find(message, "04", 3, 2))
       {
         main_message = message;
