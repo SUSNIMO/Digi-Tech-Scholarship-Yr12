@@ -10,8 +10,8 @@ int order = 0;
 std::string main_message = "";
 
 //Lights pins
-int led_up = 26;
-int led_down = 27;
+int led_up = 19;
+int led_down = 18;
 
 //Lights state
 bool up_ledState = false;
