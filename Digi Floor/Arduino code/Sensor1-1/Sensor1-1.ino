@@ -18,7 +18,7 @@ int distanceCm;
 int distance1;
 int distance2;
 int distance3;
-int REPORT;
+int threshold = 60;
 
 void report(int message)
 {
@@ -58,7 +58,7 @@ void sensor(int& led_status)
   // Convert to inches
   distanceInch = distanceCm * CM_TO_INCH;
 
-  if (distanceCm <= 60 ){
+  if (distanceCm >= threshold ){
     digitalWrite(led, HIGH);
     led_status = 1;
   }
