@@ -7,7 +7,7 @@
 std::string main_message = "";
 int order = 0;
 
-int seconds = -1;
+int seconds = 0;
 int minutes = 0;
 int start_time = 0;
 bool operations = true;
@@ -24,7 +24,7 @@ void main_time()
     start_time = millis();
   }
 
-  if (seconds > 60)
+  if (seconds > 59)
   {
     seconds = 0;
     minutes = minutes + 1;
@@ -226,7 +226,8 @@ void loop()
   {
     reset_time();
     Serial.println("No time!");
+    broadcast("01-02-00-00-03");
   }
 }
 
-//it works-
+//it works now *phew
