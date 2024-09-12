@@ -22,6 +22,28 @@ unsigned long start_time = 0;
 unsigned long u_order = 0;
 unsigned long l_order = 0;
 
+void update()
+{
+  if (order == 0)
+  {
+    broadcast("01-03-00-00-00");
+    Serial.print("OFF");
+  }
+  else
+  {
+    if (up_ledState)
+    {
+      broadcast("01-03-00-11-10");
+      Serial.print("Up!");
+    }
+    else
+    {
+      broadcast("01-03-00-01-01");
+      Serial.print("Down!");
+    }
+  }
+}
+
 //Time checker for the lights
 void time_check() {
   if ((millis() - start_time) > u_order || (millis() - start_time) > (u_order * -1))
@@ -265,4 +287,5 @@ void loop()
     digitalWrite(led_down, down_ledState);
     digitalWrite(led_up, up_ledState);
   }
+  update();
 }
