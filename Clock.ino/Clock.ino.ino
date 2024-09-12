@@ -229,4 +229,4 @@ void loop()
   }
 }
 
-//switches too fast!
+//it works-
