@@ -21,6 +21,7 @@ void main_time()
   if ((millis() - start_time) > 1000)
   {
     seconds++;
+    start_time = millis();
   }
 
   if (seconds > 60)
