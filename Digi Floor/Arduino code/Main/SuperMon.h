@@ -6,7 +6,7 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="UTF-8">
-	<title>Tsunami Wave Data Page</title>
+	<title>Tower Block Traffic Light</title>
 
 	<style>
 		body {
@@ -230,8 +230,8 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 					<td class="colum"><div class="bodytext">1st Floor</div></td>
 					<td class="colum"><div class="tabledata" id = "1fu">Up</div></td>
 					<td class="colum"><div class="tabledata" id = "1fd">Down</div></td>
-					<td class="colum"><button onclick="Command_Light(1, 11)">Up</button></td>
-					<td class="colum"><button onclick="Command_Light(1, 01)">Down</button></td>
+					<td class="colum"><button onclick="Command_Light(1, 12)">Up</button></td>
+					<td class="colum"><button onclick="Command_Light(1, 02)">Down</button></td>
 					<td class="colum"><button onclick="Command_Light(1, 00)">Off</button></td>
 				</tr>
 				<tr>
@@ -258,7 +258,7 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 <script type = "text/javascript">
 x = 0;
 document.getElementById("t").innerHTML = x;
-
+/*
 	var d1 = "Up";
 	var d2 = "Down";
 	var d3 = "Up";
@@ -268,7 +268,7 @@ document.getElementById("t").innerHTML = x;
 	status_update("2", d2);
 	status_update("3", d3);
 	status_update("T", T);
-
+*/
 
 
 	setInterval(() => {counter();}, 1000);
