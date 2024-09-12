@@ -40,7 +40,6 @@ void report(int message)
 
 void sensor(int& led_status)
 {
-  digitalWrite(led1, HIGH);
   // Clears the trigPin
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -78,13 +77,16 @@ void operations()
   delay(1000);
   sensor(distance3);
   delay(1000);
+  digitalWrite(led1, LOW);
   order = (distance1 + distance2 + distance3);
   if (order > 2)
   {
+    digitalWrite(led1, HIGH);
     report(1);
   }
   else
   {
+    digitalWrite(led1, LOW);
     report(0);
   }
 }
