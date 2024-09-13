@@ -23,6 +23,15 @@ unsigned long u_order = 0;
 unsigned long l_order = 0;
 int send = 0;
 
+bool compute = true;
+int sensor1 = 0;
+int sensor2 = 0;
+
+void compute()
+{
+  order = sensor1 + sensor2;
+}
+
 void update()
 {
   if ((millis() - send) > 100)
@@ -103,41 +112,86 @@ bool Find(const std::string& text, const std::string& search, int start, int len
     }
 }
 
+void assign_compute()
+{
+  if (Find(main_message, "01", 3, 2))
+  {
+    if (Find(main_message, "01", 6, 2))
+    {
+      if (Find(main_message, "11", 9, 2))
+      {
+        sensor1 = 1;
+      }
+      if (Find(main_message, "00", 9, 2))
+      {
+        sensor1 = 0;
+      }
+    }
+    if (Find(main_message, "11", 6, 2))
+    {
+      if (Find(main_message, "01", 9, 2))
+      {
+        sensor2 = -1;
+      }
+      if (Find(main_message, "00", 9, 2))
+      {
+        sensor2 = 0;
+      }
+    }
+  }
+}
+
 void assign_order()
 {
-  if (Find(main_message, "1", 9, 1))
+  if (Find(main_message, "04", 6, 2))
   {
-    if (Find(main_message, "1", 10, 1))
+    if (Find(main_message, "1", 9, 1))
     {
-      order = 1;
+      if (Find(main_message, "1", 10, 1))
+      {
+        order = 1;
+      }
+      if (Find(main_message, "0", 10, 1))
+      {
+        order = 0;
+      }
+      if (Find(main_message, "2", 10, 1))
+      {
+        order = 2;
+      }
     }
-    if (Find(main_message, "0", 10, 1))
+    if (Find(main_message, "0", 9, 1))
     {
-      order = 0;
-    }
-    if (Find(main_message, "2", 10, 1))
-    {
-      order = 2;
+      if (Find(main_message, "1", 10, 1))
+      {
+        order = -1;
+      }
+      if (Find(main_message, "0", 10, 1))
+      {
+        order = 0;
+      }
+      if (Find(main_message, "2", 10, 1))
+      {
+        order = -2;
+      }
     }
   }
 
-  if (Find(main_message, "0", 9, 1))
+  if (Find(main_message, "03", 6, 2))
   {
-    if (Find(main_message, "1", 10, 1))
+    if (Find(main_message, "11", 9, 2))
     {
-      order = -1;
+      compute = true;
     }
-    if (Find(main_message, "0", 10, 1))
+    if (Find(main_message, "00", 9, 2))
     {
-      order = 0;
-    }
-    if (Find(main_message, "2", 10, 1))
-    {
-      order = -2;
+      compute = false;
     }
   }
+}
 
   Serial.println(order);
+  Seril.println(compute);
 
   light_down();
   light_up();
@@ -157,8 +211,14 @@ void message_verification(std::string message) //in a scenario if anyone tried t
       if (Find(message, "04", 3, 2))
       {
         main_message = message;
-        Serial.println("Data Verified");
+        Serial.println("Data Verified for Command");
         assign_order();
+      }
+      if (Find(message, "01", 3, 2))
+      {
+        main_message = message;
+        Serial.println("Data Verified for Compute");
+        assign_compute();
       }
     }
   }
@@ -284,14 +344,31 @@ void setup()
 
 void loop()
 {
-  time_check();
-  if (order == 0) {
-    digitalWrite(led_down, LOW);
-    digitalWrite(led_up, LOW);
+  if (compute)
+  {
+    time_check();
+    if (order == 0) {
+      digitalWrite(led_down, LOW);
+      digitalWrite(led_up, LOW);
+    }
+    else {
+      digitalWrite(led_down, down_ledState);
+      digitalWrite(led_up, up_ledState);
+    }
+    update();
   }
-  else {
-    digitalWrite(led_down, down_ledState);
-    digitalWrite(led_up, up_ledState);
   }
-  update();
+  else
+  {
+    time_check();
+    if (order == 0) {
+      digitalWrite(led_down, LOW);
+      digitalWrite(led_up, LOW);
+    }
+    else {
+      digitalWrite(led_down, down_ledState);
+      digitalWrite(led_up, up_ledState);
+    }
+    update();
+  }
 }

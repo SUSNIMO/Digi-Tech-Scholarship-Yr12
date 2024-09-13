@@ -33,8 +33,8 @@ void report(int message)
   }
   else 
   {
-    broadcast("01-01-01-01-01");
-    Serial.println("01-01-01-01-01");
+    broadcast("01-01-01-00-01");
+    Serial.println("01-01-01-00-01");
   }
 }
 
