@@ -206,8 +206,10 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 					<th colspan="1"><div class="heading">Locations</div></th>
 					<th colspan="1"><div class="heading">Status</div></th>
 					<th></th>
+					<th colspan="1"><div class="heading">DC</div></th>
 					<th></th>
 					<th></th>
+					<th colspan="1"><div class="heading">Command</div></th>
 					<th></th>
 				</tr>
 				<tr>
@@ -217,6 +219,8 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 					<td class="colum"><button onclick="Command_Light(3, 11)">Up</button></td>
 					<td class="colum"><button onclick="Command_Light(3, 01)">Down</button></td>
 					<td class="colum"><button onclick="Command_Light(3, 00)">Off</button></td>
+					<td class="colum"><button onclick="Command_compute(3, 11)">Compute</button></td>
+					<td class="colum"><button onclick="Command_compute(3, 00)">Cancel</button></td>
 				</tr>
 				<tr>
 					<td class="colum"><div class="bodytext">2nd Floor</div></td>
@@ -225,6 +229,8 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 					<td class="colum"><button onclick="Command_Light(2, 11)">Up</button></td>
 					<td class="colum"><button onclick="Command_Light(2, 01)">Down</button></td>
 					<td class="colum"><button onclick="Command_Light(2, 00)">Off</button></td>
+					<td class="colum"><button onclick="Command_compute(2, 11)">Compute</button></td>
+					<td class="colum"><button onclick="Command_compute(2, 00)">Cancel</button></td>
 				</tr>
 				<tr>
 					<td class="colum"><div class="bodytext">1st Floor</div></td>
@@ -233,6 +239,8 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 					<td class="colum"><button onclick="Command_Light(1, 12)">Up</button></td>
 					<td class="colum"><button onclick="Command_Light(1, 02)">Down</button></td>
 					<td class="colum"><button onclick="Command_Light(1, 00)">Off</button></td>
+					<td class="colum"><button onclick="Command_compute(1, 11)">Compute</button></td>
+					<td class="colum"><button onclick="Command_compute(1, 00)">Cancel</button></td>
 				</tr>
 				<tr>
 					<td class="colum"><div class="bodytext">Timer</div></td>
@@ -241,6 +249,8 @@ const char PAGE_MAIN[] PROGMEM = R"=====(
 					<td class="colum"><button onclick="Command_Time(01)">Start</button></td>
 					<td class="colum"><button onclick="Command_Time(00)">Stop</button></td>
 					<td class="colum"><div class="tabledata" id = "t"></div></td>
+					<td class="colum"></td>
+					<td class="colum"></td>
 				</tr>
 			</table>
 		</div>
@@ -302,6 +312,23 @@ document.getElementById("t").innerHTML = x;
         xhttp.open("PUT", "Command2?VALUE=" + formattedData, true);
     } else if (ID == 3) {
         xhttp.open("PUT", "Command3?VALUE=" + formattedData, true);
+    }
+    
+    xhttp.send();
+	}
+	
+	function Command_compute(ID, Data) {
+    // Format Data as a two-digit string
+    var formattedData = Data.toString().padStart(2, '0');
+    
+    var xhttp = new XMLHttpRequest();
+    
+    if (ID == 1) {
+        xhttp.open("PUT", "Compute1?VALUE=" + formattedData, true);
+    } else if (ID == 2) {
+        xhttp.open("PUT", "Compute2?VALUE=" + formattedData, true);
+    } else if (ID == 3) {
+        xhttp.open("PUT", "Compute3?VALUE=" + formattedData, true);
     }
     
     xhttp.send();
