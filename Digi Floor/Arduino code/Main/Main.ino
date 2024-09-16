@@ -442,6 +442,9 @@ void setup() {
   server.on("/Command2", Command2);
   server.on("/Command3", Command3);
   server.on("/Timer", Timer);
+  server.on("/Compute1", Compute1);
+  server.on("/Compute2", Compute2);
+  server.on("/Compute3", Compute3);
   // finally begin the server
   server.begin();
 }
@@ -485,6 +488,72 @@ void SendWebsite() {
   // a longer timeout that 200 ms
   server.send(200, "text/html", PAGE_MAIN);
 
+}
+
+void Compute1() {
+  // Get the value of the "VALUE" parameter from the request
+  String Cdata = server.arg("VALUE");
+
+  std::string Command;
+
+  if (Find(Cdata.c_str(), "0", 0, 1)) 
+  {
+    Command = "01-04-03-" + std::string(Cdata.c_str()) + "-04";
+  }
+  else if (Find(Cdata.c_str(), "1", 0, 1)) 
+  {
+    Command = "01-04-04-" + std::string(Cdata.c_str()) + "-14";
+  }
+
+  // Broadcast the Command value
+  broadcast(String(Command.c_str()));
+
+  // Send an empty response to the client
+  server.send(200, "text/plain", "");
+}
+
+void Compute2() {
+  // Get the value of the "VALUE" parameter from the request
+  String Cdata = server.arg("VALUE");
+
+  std::string Command;
+
+  if (Find(Cdata.c_str(), "0", 0, 1)) 
+  {
+    Command = "02-04-03-" + std::string(Cdata.c_str()) + "-04";
+  }
+  else if (Find(Cdata.c_str(), "1", 0, 1)) 
+  {
+    Command = "02-04-04-" + std::string(Cdata.c_str()) + "-14";
+  }
+
+  // Broadcast the Command value
+  broadcast(String(Command.c_str()));
+
+  // Send an empty response to the client
+  server.send(200, "text/plain", "");
+}
+
+void Compute3() {
+  // Get the value of the "VALUE" parameter from the request
+  String Cdata = server.arg("VALUE");
+
+  std::string Command;
+
+  if (Find(Cdata.c_str(), "0", 0, 1)) 
+  {
+    Command = "03-04-03-" + std::string(Cdata.c_str()) + "-04";
+  }
+  else if (Find(Cdata.c_str(), "1", 0, 1)) 
+  {
+    Command = "03-04-04-" + std::string(Cdata.c_str()) + "-14";
+  }
+
+  // Broadcast the Command value
+  broadcast(String(Command.c_str()));
+
+  // Send an empty response to the client
+  server.send(200, "text/plain", "");
 }
 
 void Timer() {
