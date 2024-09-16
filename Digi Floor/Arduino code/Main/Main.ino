@@ -502,7 +502,7 @@ void Compute1() {
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "01-04-04-" + std::string(Cdata.c_str()) + "-14";
+    Command = "01-04-03-" + std::string(Cdata.c_str()) + "-14";
   }
 
   // Broadcast the Command value
@@ -524,7 +524,7 @@ void Compute2() {
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "02-04-04-" + std::string(Cdata.c_str()) + "-14";
+    Command = "02-04-03-" + std::string(Cdata.c_str()) + "-14";
   }
 
   // Broadcast the Command value
@@ -546,7 +546,7 @@ void Compute3() {
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "03-04-04-" + std::string(Cdata.c_str()) + "-14";
+    Command = "03-04-03-" + std::string(Cdata.c_str()) + "-14";
   }
 
   // Broadcast the Command value
