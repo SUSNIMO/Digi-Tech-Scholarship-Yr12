@@ -211,6 +211,10 @@ void assign_order()
       {
         Order = 2;
       }
+      light_down(Order);
+      light_up(Order);
+
+      start_time = millis();
     }
     if (Find(main_message, "0", 9, 1))
     {
@@ -226,12 +230,11 @@ void assign_order()
       {
         Order = -2;
       }
+      light_down(Order);
+      light_up(Order);
+
+      start_time = millis();
     }
-
-    light_down(Order);
-    light_up(Order);
-
-    start_time = millis();
   }
   //command to compute and to self operate 
   if (Find(main_message, "03", 6, 2))
