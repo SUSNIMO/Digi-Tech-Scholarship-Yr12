@@ -26,10 +26,11 @@ int send = 0;
 bool compute = true;
 int sensor1 = 0;
 int sensor2 = 0;
+int light = 0;
 
-void compute()
+void Compute()
 {
-  order = sensor1 + sensor2;
+  order = sensor1 + sensor2 + light;
 }
 
 void update()
@@ -114,6 +115,7 @@ bool Find(const std::string& text, const std::string& search, int start, int len
 
 void assign_compute()
 {
+  //data from sensor
   if (Find(main_message, "01", 3, 2))
   {
     if (Find(main_message, "01", 6, 2))
@@ -139,10 +141,34 @@ void assign_compute()
       }
     }
   }
+
+  //data from traffic Light
+  if (Find(main_message, "01", 0, 2))
+  {
+    if (Find(main_message, "03", 3, 2))
+    {
+      if (Find(main_message, "00", 9, 2))
+      {
+        light = 0;
+      }
+      if (Find(main_message, "01", 9, 2))
+      {
+        light = -1;
+      }
+      if (Find(main_message, "11", 9, 2))
+      {
+        light = 1;
+      }
+      
+    }
+  }
+
+  Compute();
 }
 
 void assign_order()
 {
+  //direct order from web
   if (Find(main_message, "04", 6, 2))
   {
     if (Find(main_message, "1", 9, 1))
@@ -176,12 +202,19 @@ void assign_order()
       }
     }
   }
-
+  //command to compute and to self operate 
   if (Find(main_message, "03", 6, 2))
   {
     if (Find(main_message, "11", 9, 2))
     {
       compute = true;
+      Serial.println(order);
+      Serial.println(compute);
+
+      light_down();
+      light_up();
+
+      start_time = millis();
     }
     if (Find(main_message, "00", 9, 2))
     {
@@ -190,34 +223,39 @@ void assign_order()
   }
 }
 
-  Serial.println(order);
-  Seril.println(compute);
-
-  light_down();
-  light_up();
-
-  start_time = millis();
-}
-
 void message_verification(std::string message) //in a scenario if anyone tried to infiltrate and tamper with the system
 {
   //message example: 01-01-02-00-10
   //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
   //the last digit in the number is just a dummy
   //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
+
+  //verify the message
   if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
   {
+    //check if for 2nd floor
     if (Find(message, "02", 0, 2)) {
+      //from web command
       if (Find(message, "04", 3, 2))
       {
         main_message = message;
         Serial.println("Data Verified for Command");
         assign_order();
       }
+      //data to compute
       if (Find(message, "01", 3, 2))
       {
         main_message = message;
         Serial.println("Data Verified for Compute");
+        assign_compute();
+      }
+    }
+    //data from 1st floor
+    if (Find(message, "01", 0, 2))
+    {
+      if (Find(message, "03", 3, 2))
+      {
+        main_message = message;
         assign_compute();
       }
     }
@@ -356,7 +394,6 @@ void loop()
       digitalWrite(led_up, up_ledState);
     }
     update();
-  }
   }
   else
   {
