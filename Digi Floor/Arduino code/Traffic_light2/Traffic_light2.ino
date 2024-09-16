@@ -6,6 +6,7 @@
 
 std::string buffer;
 int order = 0;
+int Order = 0;
 
 std::string main_message = "";
 
@@ -37,27 +38,52 @@ void update()
 {
   if ((millis() - send) > 100)
   {
-    if (order == 0)
+    if (compute)
     {
-      broadcast("02-03-00-00-00");
-      Serial.print("OFF");
-    }
-    else
-    {
-      if (up_ledState)
+      if (order == 0)
       {
-        broadcast("02-03-00-11-10");
-        Serial.print("Up!");
+        broadcast("02-03-00-00-00");
+        Serial.print("OFF");
       }
       else
       {
-        broadcast("02-03-00-01-01");
-        Serial.print("Down!");
+        if (up_ledState)
+        {
+          broadcast("02-03-00-11-10");
+          Serial.print("Up!");
+        }
+        else
+        {
+          broadcast("02-03-00-01-01");
+          Serial.print("Down!");
+        }
       }
+      send = millis();
     }
-
-    send = millis();
+    else
+    {
+      if (Order == 0)
+      {
+        broadcast("02-03-00-00-00");
+        Serial.print("OFF");
+      }
+      else
+      {
+        if (up_ledState)
+        {
+          broadcast("02-03-00-11-10");
+          Serial.print("Up!");
+        }
+        else
+        {
+          broadcast("02-03-00-01-01");
+          Serial.print("Down!");
+        }
+      }
+      send = millis();
+    }
   }
+    
 }
 
 //Time checker for the lights
@@ -83,16 +109,16 @@ bool int_check(int number)
 }
 
 //For how long the light should be on for Up
-void light_up()
+void light_up(int time)
 {
-  u_order = order * 5000;
+  u_order = time * 5000;
   up_ledState = int_check(u_order);
 }
 
 //For how long the light should be on for Down
-void light_down()
+void light_down(int time)
 {
-  l_order = order * -5000;
+  l_order = time * -5000;
   down_ledState = int_check(l_order);
 }
 
@@ -175,32 +201,37 @@ void assign_order()
     {
       if (Find(main_message, "1", 10, 1))
       {
-        order = 1;
+        Order = 1;
       }
       if (Find(main_message, "0", 10, 1))
       {
-        order = 0;
+        Order = 0;
       }
       if (Find(main_message, "2", 10, 1))
       {
-        order = 2;
+        Order = 2;
       }
     }
     if (Find(main_message, "0", 9, 1))
     {
       if (Find(main_message, "1", 10, 1))
       {
-        order = -1;
+        Order = -1;
       }
       if (Find(main_message, "0", 10, 1))
       {
-        order = 0;
+        Order = 0;
       }
       if (Find(main_message, "2", 10, 1))
       {
-        order = -2;
+        Order = -2;
       }
     }
+
+    light_down(Order);
+    light_up(Order);
+
+    start_time = millis();
   }
   //command to compute and to self operate 
   if (Find(main_message, "03", 6, 2))
@@ -211,8 +242,8 @@ void assign_order()
       Serial.println(order);
       Serial.println(compute);
 
-      light_down();
-      light_up();
+      light_down(order);
+      light_up(order);
 
       start_time = millis();
     }
@@ -372,6 +403,9 @@ void setup()
     delay(3000);
     ESP.restart();
   }
+
+  u_order = 5000;
+  start_time = millis();
   // use the built in button
   pinMode(led_up, OUTPUT);
   pinMode(led_down, OUTPUT);
@@ -382,6 +416,7 @@ void setup()
 
 void loop()
 {
+
   if (compute)
   {
     time_check();
@@ -393,12 +428,11 @@ void loop()
       digitalWrite(led_down, down_ledState);
       digitalWrite(led_up, up_ledState);
     }
-    update();
   }
   else
   {
     time_check();
-    if (order == 0) {
+    if (Order == 0) {
       digitalWrite(led_down, LOW);
       digitalWrite(led_up, LOW);
     }
@@ -406,6 +440,6 @@ void loop()
       digitalWrite(led_down, down_ledState);
       digitalWrite(led_up, up_ledState);
     }
-    update();
   }
+  update();
 }
