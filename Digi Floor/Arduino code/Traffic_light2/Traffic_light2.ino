@@ -43,19 +43,19 @@ void update()
       if (order == 0)
       {
         broadcast("02-03-00-00-00");
-        Serial.print("OFF");
+        //Serial.print("OFF");
       }
       else
       {
         if (up_ledState)
         {
           broadcast("02-03-00-11-10");
-          Serial.print("Up!");
+          //Serial.print("Up!");
         }
         else
         {
           broadcast("02-03-00-01-01");
-          Serial.print("Down!");
+          //Serial.print("Down!");
         }
       }
       send = millis();
@@ -65,19 +65,19 @@ void update()
       if (Order == 0)
       {
         broadcast("02-03-00-00-00");
-        Serial.print("OFF");
+        //Serial.print("OFF");
       }
       else
       {
         if (up_ledState)
         {
           broadcast("02-03-00-11-10");
-          Serial.print("Up!");
+          //Serial.print("Up!");
         }
         else
         {
           broadcast("02-03-00-01-01");
-          Serial.print("Down!");
+          //Serial.print("Down!");
         }
       }
       send = millis();
@@ -235,6 +235,7 @@ void assign_order()
 
       start_time = millis();
     }
+    Serial.println("DC");
   }
   //command to compute and to self operate 
   if (Find(main_message, "03", 6, 2))
@@ -254,6 +255,7 @@ void assign_order()
     {
       compute = false;
     }
+    Serial.println("COMP");
   }
 }
 
@@ -313,9 +315,9 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
   char macStr[18];
   formatMacAddress(macAddr, macStr, 18);
   // debug log the message to the serial port
-  Serial.printf("Received message from: %s - %s\n", macStr, buffer);
+  //Serial.printf("Received message from: %s - %s\n", macStr, buffer);
   // what are our instructions
-  Serial.println(buffer);
+  //Serial.println(buffer);
   message_verification(buffer);
 }
 
@@ -353,7 +355,7 @@ void broadcast(const String &message)
   esp_err_t result = esp_now_send(peerAddress, (const uint8_t *)message.c_str(), message.length());*/
   if (result == ESP_OK)
   {
-    Serial.println("Broadcast message success");
+    //Serial.println("Broadcast message success");
   }
   else if (result == ESP_ERR_ESPNOW_NOT_INIT)
   {
