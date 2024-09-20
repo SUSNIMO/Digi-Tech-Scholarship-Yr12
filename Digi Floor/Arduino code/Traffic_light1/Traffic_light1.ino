@@ -29,19 +29,22 @@ void update()
   {
     if (order == 0)
     {
-      broadcast("01-03-00-00-00");
+      broadcast("01-03-00-00-00-0404");
+      broadcast("01-03-00-00-00-0203");
       Serial.print("OFF");
     }
     else
     {
       if (up_ledState)
       {
-        broadcast("01-03-00-11-10");
+        broadcast("01-03-00-11-10-0404");
+        broadcast("01-03-00-11-10-0203");
         Serial.print("Up!");
       }
       else
       {
-        broadcast("01-03-00-01-01");
+        broadcast("01-03-00-01-01-0404");
+        broadcast("01-03-00-01-00-0203");
         Serial.print("Down!");
       }
     }
@@ -105,45 +108,20 @@ bool Find(const std::string& text, const std::string& search, int start, int len
 
 void assign_order()
 {
-  if (Find(main_message, "03", 3, 2))
+  if (Find(main_message, "04", 3, 2)) 
   {
-    Serial.println("Nope");
-  } 
-  else 
-  {
-    if (Find(main_message, "1", 9, 1))
+    if (Find(main_message, "01", 9, 2))
     {
-      if (Find(main_message, "1", 10, 1))
-      {
-        order = 1;
-      }
-      if (Find(main_message, "0", 10, 1))
-      {
-        order = 0;
-      }
-      if (Find(main_message, "2", 10, 1))
-      {
-        order = 2;
-      }
+      order = -1;
     }
-
-    if (Find(main_message, "0", 9, 1))
+    if (Find(main_message, "11", 9, 2))
     {
-      if (Find(main_message, "1", 10, 1))
-      {
-        order = -1;
-      }
-      if (Find(main_message, "0", 10, 1))
-      {
-        order = 0;
-      }
-      if (Find(main_message, "2", 10, 1))
-      {
-        order = -2;
-      }
+      order = 1;
     }
-
-    Serial.println(order);
+    if (Find(main_message, "00", 9, 2))
+    {
+      order = 0;
+    }
 
     light_down();
     light_up();
