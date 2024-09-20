@@ -494,11 +494,11 @@ void Compute1() {
 
   if (Find(Cdata.c_str(), "0", 0, 1)) 
   {
-    Command = "01-04-03-" + std::string(Cdata.c_str()) + "-04";
+    Command = "04-04-03-" + std::string(Cdata.c_str()) + "-04-0103";
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "01-04-03-" + std::string(Cdata.c_str()) + "-14";
+    Command = "04-04-03-" + std::string(Cdata.c_str()) + "-14-0103";
   }
 
   // Broadcast the Command value
@@ -516,11 +516,11 @@ void Compute2() {
 
   if (Find(Cdata.c_str(), "0", 0, 1)) 
   {
-    Command = "02-04-03-" + std::string(Cdata.c_str()) + "-04";
+    Command = "04-04-03-" + std::string(Cdata.c_str()) + "-04-0203";
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "02-04-03-" + std::string(Cdata.c_str()) + "-14";
+    Command = "04-04-03-" + std::string(Cdata.c_str()) + "-14-0203";
   }
 
   // Broadcast the Command value
@@ -538,11 +538,11 @@ void Compute3() {
 
   if (Find(Cdata.c_str(), "0", 0, 1)) 
   {
-    Command = "03-04-03-" + std::string(Cdata.c_str()) + "-04";
+    Command = "04-04-03-" + std::string(Cdata.c_str()) + "-04-0303";
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "03-04-03-" + std::string(Cdata.c_str()) + "-14";
+    Command = "04-04-03-" + std::string(Cdata.c_str()) + "-14-0303";
   }
 
   // Broadcast the Command value
@@ -560,11 +560,11 @@ void Timer() {
 
   if (Find(Cdata.c_str(), "0", 0, 1)) 
   {
-    Command = "01-04-02-" + std::string(Cdata.c_str()) + "-04";
+    Command = "04-04-04-" + std::string(Cdata.c_str()) + "-04-0402";
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "01-04-02-" + std::string(Cdata.c_str()) + "-14";
+    Command = "04-04-04-" + std::string(Cdata.c_str()) + "-14-0402";
   }
 
   // Broadcast the Command value
@@ -583,11 +583,11 @@ void Command1() {
 
   if (Find(Cdata.c_str(), "0", 0, 1)) 
   {
-    Command = "01-04-04-" + std::string(Cdata.c_str()) + "-04";
+    Command = "04-04-04-" + std::string(Cdata.c_str()) + "-04-0103";
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "01-04-04-" + std::string(Cdata.c_str()) + "-14";
+    Command = "04-04-04-" + std::string(Cdata.c_str()) + "-14-0103";
   }
 
   // Broadcast the Command value
@@ -605,11 +605,11 @@ void Command2() {
 
   if (Find(Cdata.c_str(), "0", 0, 1)) 
   {
-    Command = "02-04-04-" + std::string(Cdata.c_str()) + "-04";
+    Command = "04-04-04-" + std::string(Cdata.c_str()) + "-04-0203";
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "02-04-04-" + std::string(Cdata.c_str()) + "-14";
+    Command = "04-04-04-" + std::string(Cdata.c_str()) + "-14-0203";
   }
 
   // Broadcast the Command value
@@ -627,11 +627,11 @@ void Command3() {
 
   if (Find(Cdata.c_str(), "0", 0, 1)) 
   {
-    Command = "03-04-04-" + std::string(Cdata.c_str()) + "-04";
+    Command = "04-04-04-" + std::string(Cdata.c_str()) + "-04-0303";
   }
   else if (Find(Cdata.c_str(), "1", 0, 1)) 
   {
-    Command = "03-04-04-" + std::string(Cdata.c_str()) + "-14";
+    Command = "04-04-04-" + std::string(Cdata.c_str()) + "-14-0303";
   }
 
   // Broadcast the Command value
