@@ -239,7 +239,10 @@ void message_verification(std::string message) //in a scenario if anyone tried t
       main_data_assign();
     }  
   }
-  Serial.println("Not Verified");
+  else
+  {
+    Serial.println("Not Verified");
+  }
 }
 
 //Formatting Mac Address

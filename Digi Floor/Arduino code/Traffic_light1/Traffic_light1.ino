@@ -154,20 +154,18 @@ void assign_order()
 
 void message_verification(std::string message) //in a scenario if anyone tried to infiltrate and tamper with the system
 {
-  //message example: 01-01-02-00-10
-  //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
-  //the last digit in the number is just a dummy
-  //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
   if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
   {
-    if (Find(message, "01", 0, 2)) {
-      if (Find(message, "04", 3, 2))
-      {
-        main_message = message;
-        Serial.println("Data Verified");
-        assign_order();
-      }
+    if (Find(message, "0103", 15, 4))
+    {
+      main_message = message;
+      Serial.println("Data Verified");
+      assign_order();
     }
+  }
+  else
+  {
+    Serial.println("Not Verfied");
   }
 }
 
