@@ -228,22 +228,18 @@ void main_data_assign()
 
 void message_verification(std::string message) //in a scenario if anyone tried to infiltrate and tamper with the system
 {
-  //message example: 01-01-02-00-10
-  //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
-  //the last digit in the number is just a dummy
-  //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
-  bool class_of_data = false; 
+  //00-00-00-00-00-0000
   if ((Find(message, "1", 12, 1) && Find(message, "1", 9, 1)) || (Find(message, "0", 12, 1) && Find(message, "0", 9, 1)))
-  {  
-    new_message = true;
-    main_message = message;
-    Serial.println("Data Verified");
-    main_data_assign();
-  }
-  else 
   {
-    Serial.println("Not Verified");
+    if (Find(message, "0404", 15, 4))
+    {
+      new_message = true;
+      main_message = message;
+      Serial.println("Data Verified");
+      main_data_assign();
+    }  
   }
+  Serial.println("Not Verified");
 }
 
 //Formatting Mac Address
