@@ -105,44 +105,51 @@ bool Find(const std::string& text, const std::string& search, int start, int len
 
 void assign_order()
 {
-  if (Find(main_message, "1", 9, 1))
+  if (Find(main_message, "03", 3, 2))
   {
-    if (Find(main_message, "1", 10, 1))
-    {
-      order = 1;
-    }
-    if (Find(main_message, "0", 10, 1))
-    {
-      order = 0;
-    }
-    if (Find(main_message, "2", 10, 1))
-    {
-      order = 2;
-    }
-  }
-
-  if (Find(main_message, "0", 9, 1))
+    Serial.println("Nope");
+  } 
+  else 
   {
-    if (Find(main_message, "1", 10, 1))
+    if (Find(main_message, "1", 9, 1))
     {
-      order = -1;
+      if (Find(main_message, "1", 10, 1))
+      {
+        order = 1;
+      }
+      if (Find(main_message, "0", 10, 1))
+      {
+        order = 0;
+      }
+      if (Find(main_message, "2", 10, 1))
+      {
+        order = 2;
+      }
     }
-    if (Find(main_message, "0", 10, 1))
+
+    if (Find(main_message, "0", 9, 1))
     {
-      order = 0;
+      if (Find(main_message, "1", 10, 1))
+      {
+        order = -1;
+      }
+      if (Find(main_message, "0", 10, 1))
+      {
+        order = 0;
+      }
+      if (Find(main_message, "2", 10, 1))
+      {
+        order = -2;
+      }
     }
-    if (Find(main_message, "2", 10, 1))
-    {
-      order = -2;
-    }
+
+    Serial.println(order);
+
+    light_down();
+    light_up();
+
+    start_time = millis();
   }
-
-  Serial.println(order);
-
-  light_down();
-  light_up();
-
-  start_time = millis();
 }
 
 void message_verification(std::string message) //in a scenario if anyone tried to infiltrate and tamper with the system
