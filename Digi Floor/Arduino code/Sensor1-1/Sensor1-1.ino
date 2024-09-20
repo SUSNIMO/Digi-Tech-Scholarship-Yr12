@@ -22,19 +22,13 @@ int threshold = 60;
 
 void report(int message)
 {
-  //message example: 01-01-02-00-10
-  //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
-  //the last digit in the number is just a dummy
-  //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
   if (message == 1)
   {
-    broadcast("01-01-01-11-11");
-    Serial.println("01-01-01-11-11");
+    broadcast("01-01-01-11-11-0404");
   }
   else 
   {
-    broadcast("01-01-01-00-01");
-    Serial.println("01-01-01-00-01");
+    broadcast("01-01-01-00-01-0404");
   }
 }
 

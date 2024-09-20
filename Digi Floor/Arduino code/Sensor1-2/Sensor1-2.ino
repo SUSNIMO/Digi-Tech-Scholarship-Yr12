@@ -4,86 +4,36 @@
 #include <string>
 #include <iostream>
 
-const int trigPin = 5;
-const int echoPin = 18;
-const int led = 19;
-const int led1 = 2;
+const int trigPin = 26;
+const int echoPin = 25;
+const int led = 12;
+const int led1 = 14;
 //define sound speed in cm/uS
 #define SOUND_SPEED 0.034
 #define CM_TO_INCH 0.393701
 long duration;
 float distanceInch;
-int ticker;
-int sec;
 // Variables for test data
 int distanceCm;
 int distance1;
 int distance2;
 int distance3;
+int threshold = 60;
 
-int ID_4_1;
-int ID_4_0;
-bool computer;
-int ID_1;
-int ID_4_i0;
-int ID_5_0;
-int ID_2_4;
-int ID_3_2;
-int REPORT;
-bool wait_for_other = false;
-std::string buffer;
-int order = 0;
-bool data_verified = false;
-std::string main_message = "";
-
-void Find(std::string text, int& ID, std::string search, int start, int length)
+void report(int message)
 {
-  ID = text.find(search.c_str(), start, length);
-  if (ID != std::string::npos) {
-        ID = 1; 
-    } else {
-        ID = 0; 
-    }
-}
-
-void operator_command()
-{
-  //exp: 01-04-01-01-01
-  Find(main_message, ID_4_1, "01", 9, 2);
-  Find(main_message, ID_4_0, "00", 9, 2);
-  if (ID_4_0)
+  if (message == 1)
   {
-    computer = false;
-  }
-  if (ID_4_1)
-  {
-    computer = true;
-  }
-}
-
-void report()
-{
-  //message example: 01-01-02-00-10
-  //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
-  //the last digit in the number is just a dummy
-  //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
-  if (REPORT == 1)
-  {
-    broadcast("01-01-01-01-01");
-    Serial.println("01-01-01-01-01");
-    Serial.print('\n');
+    broadcast("01-01-02-11-11-0404");
   }
   else 
   {
-    broadcast("01-01-01-00-01");
-    Serial.println("01-01-01-00-01");
-    Serial.print('\n');
+    broadcast("01-01-02-00-01-0404");
   }
 }
 
 void sensor(int& led_status)
 {
-  digitalWrite(led1, HIGH);
   // Clears the trigPin
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -101,7 +51,7 @@ void sensor(int& led_status)
   // Convert to inches
   distanceInch = distanceCm * CM_TO_INCH;
 
-  if (distanceCm <= 60 ){
+  if (distanceCm >= threshold ){
     digitalWrite(led, HIGH);
     led_status = 1;
   }
@@ -110,54 +60,28 @@ void sensor(int& led_status)
     led_status = 0;
   }
   Serial.println(distanceCm);
-  Serial.print('\n');
 }
 
 void operations()
 {
+  int order = 0;
   sensor(distance1);
   delay(1000);
   sensor(distance2);
   delay(1000);
   sensor(distance3);
   delay(1000);
+  digitalWrite(led1, LOW);
   order = (distance1 + distance2 + distance3);
   if (order > 2)
   {
-    REPORT = 1;
+    digitalWrite(led1, HIGH);
+    report(1);
   }
   else
   {
-    REPORT = 0;
-  }
-}
-
-void message_verification(std::string message) //in a scenario if anyone tried to infiltrate and tamper with the system
-{
-  //message example: 01-01-02-00-10
-  //floor(01, 02...)-type(01- sensors, 02- time, 03-lights)-arrangment(01- down, 02- up)-message(x1= x1)-class of data(0- for negative result, 1- for positive results)
-  //the last digit in the number is just a dummy
-  //[0 in the left side if message would indicate negative numbers(0x= -x, 1x= x)]
-  Find(message, ID_1, "01", 0, 2);
-  Find(message, ID_4_i0, "0", 9, 1);
-  Find(message, ID_5_0, "0", 12, 1);
-  bool class_of_data = false;
-  if (ID_5_0 == ID_4_i0)
-  {
-    if (ID_1) {
-      main_message = message;
-      Serial.println("Data Verified");
-      Find(main_message, ID_2_4, "04", 3, 2);
-      Find(main_message, ID_3_2, "02", 6, 2);
-      Serial.print('\n');
-      if (ID_2_4)
-      {
-        if (ID_3_2)
-        {
-          operator_command();
-        }
-      }
-    }
+    digitalWrite(led1, LOW);
+    report(0);
   }
 }
 
@@ -178,9 +102,8 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
   char macStr[18];
   formatMacAddress(macAddr, macStr, 18);
   // debug log the message to the serial port
-  Serial.printf("Received message from: %s - %s\n", macStr, buffer);
+  Serial.println(buffer);
   // what are our instructions
-  message_verification(buffer);
 }
 
 // callback when data is sent
@@ -278,14 +201,6 @@ void setup()
 
 void loop()
 {
-  if (computer)
-  {
-    operations();
-    if (wait_for_other)
-    {
-      delay(500);
-    }
-    report();
-    wait_for_other = false;
-  }
+  operations();
+
 }
