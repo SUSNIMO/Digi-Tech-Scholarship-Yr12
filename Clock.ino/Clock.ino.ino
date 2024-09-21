@@ -31,11 +31,11 @@ void main_time()
   }
   if (minutes == 0 && seconds > 0)
   {
-    broadcast("01-02-00-01-03");
+    broadcast("04-02-00-01-03-0404");
   }
   if (minutes == 2 && seconds > 29)
   {
-    broadcast("01-02-00-11-13");
+    broadcast("04-02-00-11-13-0404");
   }
   if (minutes == 5 && seconds > 1)
   {
@@ -90,17 +90,11 @@ void message_verification(std::string message)
 {
   if ((Find(message, "1", 12, 1) && Find(message, "1", 9, 1)) || (Find(message, "0", 12, 1) && Find(message, "0", 9, 1)))
   {
-    if (Find(message, "01", 0, 2))
+    if (Find(message, "0402"))
     {
-      if (Find(message, "04", 3, 2))
-      {
-        if (Find(message, "02", 6, 2))
-        {
-          main_message = message;
-          order_assign();
-        }
-      }
-    }
+      main_message = message;
+      order_assign();
+    } 
   }
 }
 
@@ -226,7 +220,7 @@ void loop()
   {
     reset_time();
     Serial.println("No time!");
-    broadcast("01-02-00-00-03");
+    broadcast("01-02-00-00-03-0404");
   }
 }
 
