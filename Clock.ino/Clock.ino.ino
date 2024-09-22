@@ -90,7 +90,7 @@ void message_verification(std::string message)
 {
   if ((Find(message, "1", 12, 1) && Find(message, "1", 9, 1)) || (Find(message, "0", 12, 1) && Find(message, "0", 9, 1)))
   {
-    if (Find(message, "0402"))
+    if (Find(message, "0402", 15, 4))
     {
       main_message = message;
       order_assign();

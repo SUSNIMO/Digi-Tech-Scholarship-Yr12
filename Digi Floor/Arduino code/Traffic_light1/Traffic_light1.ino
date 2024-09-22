@@ -31,7 +31,7 @@ void update()
     {
       broadcast("01-03-00-00-00-0404");
       broadcast("01-03-00-00-00-0203");
-      Serial.print("OFF");
+      Serial.println("OFF");
     }
     else
     {
@@ -39,13 +39,13 @@ void update()
       {
         broadcast("01-03-00-11-10-0404");
         broadcast("01-03-00-11-10-0203");
-        Serial.print("Up!");
+        Serial.println("Up!");
       }
       else
       {
         broadcast("01-03-00-01-01-0404");
         broadcast("01-03-00-01-00-0203");
-        Serial.print("Down!");
+        Serial.println("Down!");
       }
     }
 
@@ -122,6 +122,14 @@ void assign_order()
     {
       order = 0;
     }
+    if (Find(main_message, "02", 9, 2))
+    {
+      order = -2;
+    }
+    if (Find(main_message, "12", 9, 2))
+    {
+      order = 2;
+    }
 
     light_down();
     light_up();
@@ -164,9 +172,9 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
   char macStr[18];
   formatMacAddress(macAddr, macStr, 18);
   // debug log the message to the serial port
-  Serial.printf("Received message from: %s - %s\n", macStr, buffer);
+  //Serial.printf("Received message from: %s - %s\n", macStr, buffer);
   // what are our instructions
-  Serial.println(buffer);
+  //Serial.println(buffer);
   message_verification(buffer);
 }
 
@@ -204,7 +212,7 @@ void broadcast(const String &message)
   esp_err_t result = esp_now_send(peerAddress, (const uint8_t *)message.c_str(), message.length());*/
   if (result == ESP_OK)
   {
-    Serial.println("Broadcast message success");
+    //Serial.println("Broadcast message success");
   }
   else if (result == ESP_ERR_ESPNOW_NOT_INIT)
   {
