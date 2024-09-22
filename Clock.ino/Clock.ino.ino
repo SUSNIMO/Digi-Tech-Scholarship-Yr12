@@ -10,6 +10,7 @@ int order = 0;
 int seconds = 0;
 int minutes = 0;
 int start_time = 0;
+int start_broadcast = 0;
 bool operations = true;
 bool time_up_permission = false;
 bool time_down_permission = false;
@@ -19,22 +20,21 @@ int order_time = 0;
 
 void update_status()
 {
-  if ((millis() - start_time) > 100)
+  if ((millis() - start_broadcast) > 100)
   {
     if (order_time == 0)
     {
       broadcast("04-02-00-00-02-0404");
     }
-    if (order_time == -1)
+    if (order_time < 0)
     {
       broadcast("04-02-00-01-02-0404");
     }
-    if (order_time == 1)
+    if (order_time > 0)
     {
       broadcast("04-02-00-11-12-0404");
     }
-
-    start_time = millis();
+    start_broadcast = millis();
   }
 }
 
@@ -51,7 +51,7 @@ void main_time()
     seconds = 0;
     minutes = minutes + 1;
   }
-  if (minutes == 0 && seconds > 0)
+  if (minutes == 0 && seconds > -1)
   {
     order_time = -1;
   }
@@ -71,7 +71,7 @@ void main_time()
 
 void reset_time()
 {
-  seconds = -1;
+  seconds = 0;
   minutes = 0;
   time_up_permission = false;
   time_down_permission = false;
@@ -103,8 +103,8 @@ void order_assign()
   if (Find(main_message, "0", 10, 1))
   {
     order = 0;
+    order_time = 0;
   }
-
   start_time = millis();
 }
 
@@ -230,7 +230,7 @@ void setup()
     ESP.restart();
   }
 
-  start_time = millis();
+  start_broadcast = millis();
 }
 
 void loop()
