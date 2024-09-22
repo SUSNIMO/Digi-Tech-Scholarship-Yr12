@@ -15,6 +15,28 @@ bool time_up_permission = false;
 bool time_down_permission = false;
 std::string TIME = "";
 String TIME1;
+int order_time = 0;
+
+void update_status()
+{
+  if ((millis() - start_time) > 100)
+  {
+    if (order_time == 0)
+    {
+      broadcast("04-02-00-00-02-0404");
+    }
+    if (order_time == -1)
+    {
+      broadcast("04-02-00-01-02-0404");
+    }
+    if (order_time == 1)
+    {
+      broadcast("04-02-00-11-12-0404");
+    }
+
+    start_time = millis();
+  }
+}
 
 void main_time()
 {
@@ -31,11 +53,11 @@ void main_time()
   }
   if (minutes == 0 && seconds > 0)
   {
-    broadcast("04-02-00-01-03-0404");
+    order_time = -1;
   }
   if (minutes == 2 && seconds > 29)
   {
-    broadcast("04-02-00-11-13-0404");
+    order_time = 1;
   }
   if (minutes == 5 && seconds > 1)
   {
@@ -207,6 +229,8 @@ void setup()
     delay(3000);
     ESP.restart();
   }
+
+  start_time = millis();
 }
 
 void loop()
@@ -220,8 +244,9 @@ void loop()
   {
     reset_time();
     Serial.println("No time!");
-    broadcast("01-02-00-00-03-0404");
   }
+
+  update_status();
 }
 
 //it works now *phew
