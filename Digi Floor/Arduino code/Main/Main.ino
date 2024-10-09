@@ -18,18 +18,7 @@ std::string f2_data = "None";
 std::string f3_data = "None";
 std::string T_data = "None";
 
-bool new_message = false;
 std::string main_message = "";
-std::string M1_order = "";
-String Main_order = "";
-bool computer = false;
-bool operations = true;
-int order = 0;
-int s_message1 = 0;
-int s_message2 = 0;
-int t_message = 0;
-std::string converted_order = "";
-std::string M_order = "";
 
 char XML[2048];
 char buf[32];
@@ -81,21 +70,7 @@ void variable_assign(std::string &status, const std::string &message)
 
 void time_data_assign()
 {
-  if (Find(main_message, "1", 9, 1))
-  {
-    if (Find(main_message, "1", 10, 1))
-    {
-      t_message = 1;
-    }
-  }
-  if (Find(main_message, "0", 9, 1))
-  {
-    if (Find(main_message, "1", 10, 1))
-    {
-      t_message = -1;
-    }
-  }
-
+  Serial.println("T1");
   variable_assign(T_data, main_message);
 }
 
