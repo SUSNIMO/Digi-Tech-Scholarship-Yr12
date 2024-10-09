@@ -46,43 +46,6 @@ IPAddress ip;
 // gotta create a server
 WebServer server(80);
 
-void calculate()
-{
-  order = s_message1 + s_message2 + t_message;
-  converted_order = std::to_string(order);
-  if (order > 0)
-  {
-    M_order = "1" + converted_order;
-    M1_order = "01-04-04-" + M_order + "-14";
-  }
-  if (order < 0)
-  {
-    order = order * (-1);
-    M_order = "0" + converted_order;
-    M1_order = "01-04-04-" + M_order + "-04";
-  }
-  Main_order = M1_order.c_str();
-  broadcast(Main_order);
-  operations = true;
-}
-
-void compute() 
-{
-  if (new_message)
-  {
-    if (computer)
-    {
-      new_message = false;
-      if (operations)
-      {
-        operations = false;
-        main_data_assign();
-        calculate();
-      }
-    }
-  }
-}
-
 bool Find(const std::string& text, const std::string& search, int start, int length) {
     if (start >= text.length() || length <= 0) {
         return false; // Invalid parameters
@@ -98,33 +61,6 @@ bool Find(const std::string& text, const std::string& search, int start, int len
         //Serial.print("Did not find '"); Serial.print(search.c_str()); Serial.print("' within range starting at "); Serial.println(start);
         return false;
     }
-}
-
-
-void sensor_data_assign()
-{
-  if (Find(main_message, "01", 6, 2))
-  {
-    if (Find(main_message, "1", 10, 1))
-    {
-      s_message1 = 1;
-    }
-    if (Find(main_message, "0", 10, 1))
-    {
-      s_message1 = 0;
-    }
-  }
-  if (Find(main_message, "02", 6, 2)) 
-  {
-    if (Find(main_message, "1", 10, 1))
-    {
-      s_message2 = -1;
-    }
-    if (Find(main_message, "0", 10, 1))
-    {
-      s_message2 = 0;
-    }
-  }
 }
 
 void variable_assign(std::string &status, const std::string &message)
@@ -183,25 +119,6 @@ void light_data_assign()
   }
 }
 
-void operator_command()
-{
-  M1_order = main_message;
-  Main_order = M1_order.c_str();
-  broadcast(Main_order);
-  //exp: 01-04-01-01-01
-  if (Find(main_message, "01", 6, 2))
-  {
-    if (Find(main_message, "00", 9, 2))
-    {
-      computer = false;
-    }
-    if (Find(main_message, "01", 9, 2))
-    {
-      computer = true;
-    }
-  }
-}
-
 void main_data_assign()
 {
   Serial.println("Main data assign");
@@ -210,19 +127,10 @@ void main_data_assign()
     Serial.println("2");
     time_data_assign();
   }
-  if (Find(main_message, "01", 3, 2)) 
-  {
-    Serial.println("1");
-    sensor_data_assign();
-  }
   if (Find(main_message, "03", 3, 2))
   {
     Serial.println("3");
     light_data_assign();
-  }
-  else if (Find(main_message, "04", 3, 2))
-  {
-    operator_command();
   }
 }
 
@@ -451,8 +359,6 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   server.handleClient();
-
-  compute();
 }
 
 // I think I got this code from the wifi example
