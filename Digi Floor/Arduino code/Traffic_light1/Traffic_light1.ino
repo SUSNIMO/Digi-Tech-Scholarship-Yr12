@@ -6,12 +6,13 @@
 
 std::string buffer;
 int order = 0;
+int Order = 0;
 
 std::string main_message = "";
 
 //Lights pins
-int led_up = 19;
-int led_down = 18;
+int led_up = 26;
+int led_down = 27;
 
 //Lights state
 bool up_ledState = false;
@@ -23,34 +24,66 @@ unsigned long u_order = 0;
 unsigned long l_order = 0;
 int send = 0;
 
+bool compute = true;
+int sensor1 = 0;
+int sensor2 = 0;
+int oras = 0;
+
+void Compute()
+{
+  order = sensor1 + sensor2 + oras;
+}
+
 void update()
 {
   if ((millis() - send) > 100)
   {
-    if (order == 0)
+    if (compute)
     {
-      broadcast("01-03-00-00-00-0404");
-      broadcast("01-03-00-00-00-0203");
-      Serial.println("OFF");
-    }
-    else
-    {
-      if (up_ledState)
+      if (order == 0)
       {
-        broadcast("01-03-00-11-10-0404");
-        broadcast("01-03-00-11-10-0203");
-        Serial.println("Up!");
+        broadcast("02-03-00-00-00");
+        //Serial.print("OFF");
       }
       else
       {
-        broadcast("01-03-00-01-01-0404");
-        broadcast("01-03-00-01-00-0203");
-        Serial.println("Down!");
+        if (up_ledState)
+        {
+          broadcast("02-03-00-11-10");
+          //Serial.print("Up!");
+        }
+        else
+        {
+          broadcast("02-03-00-01-01");
+          //Serial.print("Down!");
+        }
       }
+      send = millis();
     }
-
-    send = millis();
+    else
+    {
+      if (Order == 0)
+      {
+        broadcast("02-03-00-00-00");
+        //Serial.print("OFF");
+      }
+      else
+      {
+        if (up_ledState)
+        {
+          broadcast("02-03-00-11-10");
+          //Serial.print("Up!");
+        }
+        else
+        {
+          broadcast("02-03-00-01-01");
+          //Serial.print("Down!");
+        }
+      }
+      send = millis();
+    }
   }
+    
 }
 
 //Time checker for the lights
@@ -76,16 +109,16 @@ bool int_check(int number)
 }
 
 //For how long the light should be on for Up
-void light_up()
+void light_up(int time)
 {
-  u_order = order * 5000;
+  u_order = time * 5000;
   up_ledState = int_check(u_order);
 }
 
 //For how long the light should be on for Down
-void light_down()
+void light_down(int time)
 {
-  l_order = order * -5000;
+  l_order = time * -5000;
   down_ledState = int_check(l_order);
 }
 
@@ -106,35 +139,126 @@ bool Find(const std::string& text, const std::string& search, int start, int len
     }
 }
 
+void assign_compute()
+{
+  //data from sensor on 1st floor
+  if (Find(main_message, "01", 0, 2))
+  {
+    if (Find(main_message, "01", 3, 2))
+    {
+      if (Find(main_message, "01", 6, 2))
+      {
+        if (Find(main_message, "11", 9, 2))
+        {
+          sensor1 = 1;
+        }
+        if (Find(main_message, "00", 9, 2))
+        {
+          sensor1 = 0;
+        }
+      }
+      if (Find(main_message, "11", 6, 2))
+      {
+        if (Find(main_message, "01", 9, 2))
+        {
+          sensor2 = -1;
+        }
+        if (Find(main_message, "00", 9, 2))
+        {
+          sensor2 = 0;
+        }
+      }
+    }
+  }
+
+  //data from timer
+  if (Find(main_message, "04", 0, 2))
+  {
+    if (Find(main_message, "02", 3, 2))
+    {
+      if (Find(main_message, "00", 9, 2))
+      {
+        oras = 0;
+      }
+      if (Find(main_message, "01", 9, 2))
+      {
+        oras = -1;
+      }
+      if (Find(main_message, "11", 9, 2))
+      {
+        oras = 1;
+      }
+      
+    }
+  }
+
+  Compute();
+}
+
 void assign_order()
 {
-  if (Find(main_message, "04", 3, 2)) 
+  //direct order from web
+  if (Find(main_message, "04", 6, 2))
   {
-    if (Find(main_message, "01", 9, 2))
+    if (Find(main_message, "1", 9, 1))
     {
-      order = -1;
+      if (Find(main_message, "1", 10, 1))
+      {
+        Order = 1;
+      }
+      if (Find(main_message, "0", 10, 1))
+      {
+        Order = 0;
+      }
+      if (Find(main_message, "2", 10, 1))
+      {
+        Order = 2;
+      }
+      light_down(Order);
+      light_up(Order);
+
+      start_time = millis();
     }
+    if (Find(main_message, "0", 9, 1))
+    {
+      if (Find(main_message, "1", 10, 1))
+      {
+        Order = -1;
+      }
+      if (Find(main_message, "0", 10, 1))
+      {
+        Order = 0;
+      }
+      if (Find(main_message, "2", 10, 1))
+      {
+        Order = -2;
+      }
+      light_down(Order);
+      light_up(Order);
+
+      start_time = millis();
+    }
+    Serial.println("DC");
+  }
+  //command to compute and to self operate 
+  if (Find(main_message, "03", 6, 2))
+  {
     if (Find(main_message, "11", 9, 2))
     {
-      order = 1;
+      compute = true;
+      Serial.println(order);
+      Serial.println(compute);
+
+      light_down(order);
+      light_up(order);
+
+      start_time = millis();
     }
     if (Find(main_message, "00", 9, 2))
     {
-      order = 0;
+      compute = false;
     }
-    if (Find(main_message, "02", 9, 2))
-    {
-      order = -2;
-    }
-    if (Find(main_message, "12", 9, 2))
-    {
-      order = 2;
-    }
-
-    light_down();
-    light_up();
-
-    start_time = millis();
+    Serial.println("COMP");
   }
 }
 
@@ -145,13 +269,15 @@ void message_verification(std::string message) //in a scenario if anyone tried t
     if (Find(message, "0103", 15, 4))
     {
       main_message = message;
-      Serial.println("Data Verified");
-      assign_order();
+      if (Find(main_message, "04-04-04-", 0, 9) || Find(main_message, "04-04-03-", 0, 9))
+      {
+        assign_order();
+      }
+      if (Find(main_message, "01-01-", 0, 6) || Find(main_message, "04-02-00-", 0, 9))
+      {
+        assign_compute();
+      }
     }
-  }
-  else
-  {
-    Serial.println("Not Verfied");
   }
 }
 
@@ -265,6 +391,9 @@ void setup()
     delay(3000);
     ESP.restart();
   }
+
+  u_order = 5000;
+  start_time = millis();
   // use the built in button
   pinMode(led_up, OUTPUT);
   pinMode(led_down, OUTPUT);
@@ -275,14 +404,30 @@ void setup()
 
 void loop()
 {
-  time_check();
-  if (order == 0) {
-    digitalWrite(led_down, LOW);
-    digitalWrite(led_up, LOW);
+
+  if (compute)
+  {
+    time_check();
+    if (order == 0) {
+      digitalWrite(led_down, LOW);
+      digitalWrite(led_up, LOW);
+    }
+    else {
+      digitalWrite(led_down, down_ledState);
+      digitalWrite(led_up, up_ledState);
+    }
   }
-  else {
-    digitalWrite(led_down, down_ledState);
-    digitalWrite(led_up, up_ledState);
+  else
+  {
+    time_check();
+    if (Order == 0) {
+      digitalWrite(led_down, LOW);
+      digitalWrite(led_up, LOW);
+    }
+    else {
+      digitalWrite(led_down, down_ledState);
+      digitalWrite(led_up, up_ledState);
+    }
   }
   update();
 }
