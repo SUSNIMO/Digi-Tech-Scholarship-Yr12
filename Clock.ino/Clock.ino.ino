@@ -25,14 +25,17 @@ void update_status()
     if (order_time == 0)
     {
       broadcast("04-02-00-00-02-0404");
+      broadcast("04-02-00-00-02-0103");
     }
     if (order_time < 0)
     {
       broadcast("04-02-00-01-02-0404");
+      broadcast("04-02-00-01-02-0103");
     }
     if (order_time > 0)
     {
       broadcast("04-02-00-11-12-0404");
+      broadcast("04-02-00-11-12-0103");
     }
     start_broadcast = millis();
   }
