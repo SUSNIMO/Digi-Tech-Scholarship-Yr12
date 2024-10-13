@@ -11,8 +11,8 @@ int Order = 0;
 std::string main_message = "";
 
 //Lights pins
-int led_up = 26;
-int led_down = 27;
+int led_up = 18;
+int led_down = 19;  
 
 //Lights state
 bool up_ledState = false;
@@ -436,4 +436,10 @@ void loop()
     }
   }
   update();
+
+  Serial.print(Order);
+  Serial.print("-");
+  Serial.print(order);  
+  Serial.print("=");
+  Serial.println(compute);
 }
