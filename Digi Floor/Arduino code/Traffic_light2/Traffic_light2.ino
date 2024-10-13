@@ -23,6 +23,7 @@ unsigned long start_time = 0;
 unsigned long u_order = 0;
 unsigned long l_order = 0;
 int send = 0;
+bool direction = false;
 
 bool compute = true;
 int sensor1 = 0;
@@ -93,12 +94,27 @@ void update()
 }
 
 //Time checker for the lights
-void time_check() {
-  if ((millis() - start_time) > u_order || (millis() - start_time) > (u_order * -1))
+void time_check() 
+{
+  if (direction)
   {
-    up_ledState = !up_ledState;
-    down_ledState = !down_ledState;
-    start_time = millis();
+    if ((millis() - start_time) > u_order)
+    {
+      up_ledState = !up_ledState;
+      down_ledState = !down_ledState;
+      start_time = millis();
+      direction = !direction;
+    }
+  }
+  else 
+  {
+    if ((millis() - start_time) > (l_order * -1))
+    {
+      up_ledState = !up_ledState;
+      down_ledState = !down_ledState;
+      start_time = millis();
+      direction = !direction;
+    }
   }
 }
 
@@ -117,15 +133,31 @@ bool int_check(int number)
 //For how long the light should be on for Up
 void light_up(int time)
 {
-  u_order = time * 5000;
-  up_ledState = int_check(u_order);
+  if (time > 0)
+  {
+    u_order = time * 5000;
+    up_ledState = int_check(u_order);
+  }
+  if (time < 0 || time == 0)
+  {
+    u_order = -1 * 5000;
+    up_ledState = int_check(u_order);
+  }
 }
 
 //For how long the light should be on for Down
 void light_down(int time)
 {
-  l_order = time * -5000;
-  down_ledState = int_check(l_order);
+  if (time > 0 || time == 0)
+  {
+    l_order = -1 * 5000;
+    down_ledState = int_check(l_order);
+  }
+  if (time < 0)
+  {
+    l_order = time * 5000;
+    down_ledState = int_check(l_order);
+  }
 }
 
 bool Find(const std::string& text, const std::string& search, int start, int length) {
