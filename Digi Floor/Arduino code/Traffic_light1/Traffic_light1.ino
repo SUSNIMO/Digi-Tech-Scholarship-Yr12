@@ -42,19 +42,22 @@ void update()
     {
       if (order == 0)
       {
-        broadcast("02-03-00-00-00");
+        broadcast("01-03-00-00-00-0404");
+        broadcast("01-03-00-00-00-0203");
         //Serial.print("OFF");
       }
       else
       {
         if (up_ledState)
         {
-          broadcast("02-03-00-11-10");
+          broadcast("01-03-00-11-10-0404");
+          broadcast("01-03-00-11-10-0203");
           //Serial.print("Up!");
         }
         else
         {
-          broadcast("02-03-00-01-01");
+          broadcast("01-03-00-01-01-0404");
+          broadcast("01-03-00-01-01-0203");
           //Serial.print("Down!");
         }
       }
@@ -64,19 +67,22 @@ void update()
     {
       if (Order == 0)
       {
-        broadcast("02-03-00-00-00");
+        broadcast("01-03-00-00-00-0404");
+        broadcast("01-03-00-00-00-0203");
         //Serial.print("OFF");
       }
       else
       {
         if (up_ledState)
         {
-          broadcast("02-03-00-11-10");
+          broadcast("01-03-00-11-10-0404");
+          broadcast("01-03-00-11-10-0203");
           //Serial.print("Up!");
         }
         else
         {
-          broadcast("02-03-00-01-01");
+          broadcast("01-03-00-01-01-0404");
+          broadcast("01-03-00-01-01-0203");
           //Serial.print("Down!");
         }
       }
