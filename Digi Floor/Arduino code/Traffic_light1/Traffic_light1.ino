@@ -410,7 +410,6 @@ void setup()
 
 void loop()
 {
-
   if (compute)
   {
     time_check();
@@ -436,10 +435,11 @@ void loop()
     }
   }
   update();
-
+/*
   Serial.print(Order);
   Serial.print("-");
   Serial.print(order);  
   Serial.print("=");
   Serial.println(compute);
+  */
 }
