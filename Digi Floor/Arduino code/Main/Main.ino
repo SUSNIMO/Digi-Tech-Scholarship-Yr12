@@ -116,7 +116,6 @@ void message_verification(std::string message) //in a scenario if anyone tried t
   {
     if (Find(message, "0404", 15, 4))
     {
-      new_message = true;
       main_message = message;
       Serial.println("Data Verified");
       main_data_assign();
