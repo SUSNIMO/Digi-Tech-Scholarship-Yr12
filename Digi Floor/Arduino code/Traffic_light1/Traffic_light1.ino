@@ -187,17 +187,21 @@ void light_down(int time)
 }
 
 bool Find(const std::string& text, const std::string& search, int start, int length) {
-    if (start >= text.length() || length <= 0) {
+    if (start >= text.length() || length <= 0) 
+    {
         return false; // Invalid parameters
     }
     // Ensure length does not exceed the remaining text length
     length = std::min(length, static_cast<int>(text.length()) - start);
     
     size_t found = text.find(search, start);
-    if (found != std::string::npos && found + search.length() <= start + length) {
+    if (found != std::string::npos && found + search.length() <= start + length) 
+    {
         //Serial.print("Found '"); Serial.print(search.c_str()); Serial.print("' at position "); Serial.println(found);
         return true;
-    } else {
+    } 
+    else 
+    {
         //Serial.print("Did not find '"); Serial.print(search.c_str()); Serial.print("' within range starting at "); Serial.println(start);
         return false;
     }
