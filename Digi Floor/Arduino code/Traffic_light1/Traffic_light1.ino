@@ -7,6 +7,7 @@
 std::string buffer;
 int order = 0;
 int Order = 0;
+cycle = true;
 
 std::string main_message = "";
 
@@ -96,6 +97,7 @@ void update()
 // Time checker for the lights
 void time_check() 
 {
+  int i;
   if (direction) // Up light is supposed to be on
   {
     if ((millis() - start_time) > u_order) // Check if the time for Up light has passed
@@ -112,6 +114,7 @@ void time_check()
       up_ledState = true;
       down_ledState = false;
     }
+    i++;
   }
   else // Down light is supposed to be on
   {
@@ -129,6 +132,17 @@ void time_check()
       up_ledState = false;
       down_ledState = true;
     }
+    i++;
+  }
+
+  if (i == 2)
+  {
+    cycle = true;
+    i = 0;
+  }
+  else 
+  {
+    cycle = false;
   }
 }
 
@@ -247,7 +261,10 @@ void assign_compute()
     }
   }
 
-  Compute();
+  if (cycle)
+  {
+    Compute();
+  }
 }
 
 void assign_order()
