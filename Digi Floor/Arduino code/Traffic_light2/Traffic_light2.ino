@@ -93,27 +93,41 @@ void update()
     
 }
 
-//Time checker for the lights
+// Time checker for the lights
 void time_check() 
 {
-  if (direction)
+  if (direction) // Up light is supposed to be on
   {
-    if ((millis() - start_time) > u_order)
+    if ((millis() - start_time) > u_order) // Check if the time for Up light has passed
     {
-      up_ledState = !up_ledState;
-      down_ledState = !down_ledState;
-      start_time = millis();
-      direction = !direction;
+      // Turn off Up light and turn on Down light
+      up_ledState = false; 
+      down_ledState = true;
+      start_time = millis(); // Reset timer
+      direction = !direction; // Switch direction
+    }
+    else
+    {
+      // Ensure Up light is on and Down light is off during this phase
+      up_ledState = true;
+      down_ledState = false;
     }
   }
-  else 
+  else // Down light is supposed to be on
   {
-    if ((millis() - start_time) > (l_order * -1))
+    if ((millis() - start_time) > l_order) // Check if the time for Down light has passed
     {
-      up_ledState = !up_ledState;
-      down_ledState = !down_ledState;
-      start_time = millis();
-      direction = !direction;
+      // Turn off Down light and turn on Up light
+      up_ledState = true; 
+      down_ledState = false;
+      start_time = millis(); // Reset timer
+      direction = !direction; // Switch direction
+    }
+    else
+    {
+      // Ensure Down light is on and Up light is off during this phase
+      up_ledState = false;
+      down_ledState = true;
     }
   }
 }

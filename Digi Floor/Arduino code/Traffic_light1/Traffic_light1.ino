@@ -93,30 +93,45 @@ void update()
     
 }
 
-//Time checker for the lights
+// Time checker for the lights
 void time_check() 
 {
-  if (direction)
+  if (direction) // Up light is supposed to be on
   {
-    if ((millis() - start_time) > u_order)
+    if ((millis() - start_time) > u_order) // Check if the time for Up light has passed
     {
-      up_ledState = !up_ledState;
-      down_ledState = !down_ledState;
-      start_time = millis();
-      direction = !direction;
+      // Turn off Up light and turn on Down light
+      up_ledState = false; 
+      down_ledState = true;
+      start_time = millis(); // Reset timer
+      direction = !direction; // Switch direction
+    }
+    else
+    {
+      // Ensure Up light is on and Down light is off during this phase
+      up_ledState = true;
+      down_ledState = false;
     }
   }
-  else 
+  else // Down light is supposed to be on
   {
-    if ((millis() - start_time) > (l_order * -1))
+    if ((millis() - start_time) > (l_order * -1)) // Check if the time for Down light has passed
     {
-      up_ledState = !up_ledState;
-      down_ledState = !down_ledState;
-      start_time = millis();
-      direction = !direction;
+      // Turn off Down light and turn on Up light
+      up_ledState = true; 
+      down_ledState = false;
+      start_time = millis(); // Reset timer
+      direction = !direction; // Switch direction
+    }
+    else
+    {
+      // Ensure Down light is on and Up light is off during this phase
+      up_ledState = false;
+      down_ledState = true;
     }
   }
 }
+
 
 bool int_check(int number)
 {
@@ -135,14 +150,17 @@ void light_up(int time)
 {
   if (time > 0)
   {
-    u_order = time * 5000;
-    up_ledState = int_check(u_order);
+    u_order = (time + 1) * 5000;
   }
-  if (time < 0 || time == 0)
+  if (time < 0)
   {
     u_order = -1 * 5000;
-    up_ledState = int_check(u_order);
   }
+  if (time == 0)
+  {
+    u_order = 1 * 5000;
+  }
+  up_ledState = int_check(u_order);
 }
 
 //For how long the light should be on for Down
@@ -151,13 +169,12 @@ void light_down(int time)
   if (time > 0 || time == 0)
   {
     l_order = -1 * 5000;
-    down_ledState = int_check(l_order);
   }
   if (time < 0)
   {
-    l_order = time * 5000;
-    down_ledState = int_check(l_order);
+    l_order = (time - 1) * 5000;
   }
+  down_ledState = int_check(l_order);
 }
 
 bool Find(const std::string& text, const std::string& search, int start, int length) {
@@ -445,14 +462,9 @@ void loop()
   if (compute)
   {
     time_check();
-    if (order == 0) {
-      digitalWrite(led_down, LOW);
-      digitalWrite(led_up, LOW);
-    }
-    else {
-      digitalWrite(led_down, down_ledState);
-      digitalWrite(led_up, up_ledState);
-    }
+
+    digitalWrite(led_down, down_ledState);
+    digitalWrite(led_up, up_ledState);
   }
   else
   {
