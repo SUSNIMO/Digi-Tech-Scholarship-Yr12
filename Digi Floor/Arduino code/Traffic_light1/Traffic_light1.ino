@@ -7,7 +7,6 @@
 std::string buffer;
 int order = 0;
 int Order = 0;
-cycle = true;
 
 std::string main_message = "";
 
@@ -137,12 +136,8 @@ void time_check()
 
   if (i == 2)
   {
-    cycle = true;
     i = 0;
-  }
-  else 
-  {
-    cycle = false;
+    Compute();
   }
 }
 
@@ -259,11 +254,6 @@ void assign_compute()
       }
       
     }
-  }
-
-  if (cycle)
-  {
-    Compute();
   }
 }
 
