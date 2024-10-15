@@ -75,6 +75,7 @@ void time_check()
       down_ledState = true;
       start_time = millis(); // Reset timer
       direction = false; // Switch direction
+      i++;
     }
     else
     {
@@ -82,7 +83,6 @@ void time_check()
       up_ledState = true;
       down_ledState = false;
     }
-    i++;
   }
   else // Down light is supposed to be on
   {
@@ -93,6 +93,7 @@ void time_check()
       down_ledState = false;
       start_time = millis(); // Reset timer
       direction = true; // Switch direction
+      i++;
     }
     else
     {
@@ -100,13 +101,22 @@ void time_check()
       up_ledState = false;
       down_ledState = true;
     }
-    i++;
   }
 
   if (i == 2)
   {
     i = 0;
     Compute();
+    if (compute)
+    {
+      light_up(order);
+      light_down(order);
+    }
+    else
+    { 
+      light_up(Order);
+      light_down(Order);
+    }
   }
 }
 
