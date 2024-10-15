@@ -454,7 +454,7 @@ void loop()
     time_check();
     if (Order == 0) {
       digitalWrite(led_down, LOW);
-      digitalWrite(led_up, LOW);fvf
+      digitalWrite(led_up, LOW);
     }
     else {
       digitalWrite(led_down, down_ledState);
@@ -467,6 +467,8 @@ void loop()
   Serial.print("-");
   Serial.print(order);  
   Serial.print("=");
-  Serial.println(compute);
+  Serial.print(compute);
+  Serial.print(":");
+  Serial.println(direction);
   
 }
