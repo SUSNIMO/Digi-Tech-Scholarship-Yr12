@@ -7,6 +7,7 @@
 std::string buffer;
 int order = 0;
 int Order = 0;
+int i;
 
 std::string main_message = "";
 
@@ -65,7 +66,6 @@ void update()
 // Time checker for the lights
 void time_check() 
 {
-  int i;
   if (direction) // Up light is supposed to be on
   {
     if ((millis() - start_time) > u_order) // Check if the time for Up light has passed
