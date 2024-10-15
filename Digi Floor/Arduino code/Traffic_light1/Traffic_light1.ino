@@ -26,6 +26,7 @@ int send = 0;
 bool direction = false;
 
 bool compute = true;
+bool DC = false;
 int sensor1 = 0;
 int sensor2 = 0;
 int oras = 0;
@@ -39,58 +40,26 @@ void update()
 {
   if ((millis() - send) > 100)
   {
-    if (compute)
+    if (compute || DC)
     {
-      if (order == 0)
+      if (up_ledState)
       {
-        broadcast("01-03-00-00-00-0404");
-        broadcast("01-03-00-00-00-0203");
-        //Serial.print("OFF");
+        broadcast("01-03-00-11-10-0404");
+        broadcast("01-03-00-11-10-0103");
       }
-      else
+      else 
       {
-        if (up_ledState)
-        {
-          broadcast("01-03-00-11-10-0404");
-          broadcast("01-03-00-11-10-0203");
-          //Serial.print("Up!");
-        }
-        else
-        {
-          broadcast("01-03-00-01-01-0404");
-          broadcast("01-03-00-01-01-0203");
-          //Serial.print("Down!");
-        }
+        broadcast("01-03-00-01-00-0404");
+        broadcast("01-03-00-01-00-0103");
       }
-      send = millis();
     }
     else
     {
-      if (Order == 0)
-      {
-        broadcast("01-03-00-00-00-0404");
-        broadcast("01-03-00-00-00-0203");
-        //Serial.print("OFF");
-      }
-      else
-      {
-        if (up_ledState)
-        {
-          broadcast("01-03-00-11-10-0404");
-          broadcast("01-03-00-11-10-0203");
-          //Serial.print("Up!");
-        }
-        else
-        {
-          broadcast("01-03-00-01-01-0404");
-          broadcast("01-03-00-01-01-0203");
-          //Serial.print("Down!");
-        }
-      }
-      send = millis();
+      broadcast("01-03-00-00-00-0404");
+      broadcast("01-03-00-00-00-0103");
     }
+    send = millis();
   }
-    
 }
 
 // Time checker for the lights
@@ -105,7 +74,7 @@ void time_check()
       up_ledState = false; 
       down_ledState = true;
       start_time = millis(); // Reset timer
-      direction = !direction; // Switch direction
+      direction = false; // Switch direction
     }
     else
     {
@@ -123,7 +92,7 @@ void time_check()
       up_ledState = true; 
       down_ledState = false;
       start_time = millis(); // Reset timer
-      direction = !direction; // Switch direction
+      direction = true; // Switch direction
     }
     else
     {
@@ -138,19 +107,6 @@ void time_check()
   {
     i = 0;
     Compute();
-  }
-}
-
-
-bool int_check(int number)
-{
-  if (number > 0)
-  {
-    return 1 > 0;
-  }
-  if (number < 0)
-  {
-    return 1 < 0;
   }
 }
 
@@ -169,7 +125,6 @@ void light_up(int time)
   {
     u_order = 1 * 5000;
   }
-  up_ledState = int_check(u_order);
 }
 
 //For how long the light should be on for Down
@@ -183,7 +138,6 @@ void light_down(int time)
   {
     l_order = (time - 1) * 5000;
   }
-  down_ledState = int_check(l_order);
 }
 
 bool Find(const std::string& text, const std::string& search, int start, int length) {
@@ -268,17 +222,21 @@ void assign_order()
   {
     if (Find(main_message, "1", 9, 1))
     {
+      direction = true;
       if (Find(main_message, "1", 10, 1))
       {
         Order = 1;
+        DC = true;
       }
       if (Find(main_message, "0", 10, 1))
       {
         Order = 0;
+        DC = false;
       }
       if (Find(main_message, "2", 10, 1))
       {
         Order = 2;
+        DC = true;
       }
       light_down(Order);
       light_up(Order);
@@ -287,17 +245,21 @@ void assign_order()
     }
     if (Find(main_message, "0", 9, 1))
     {
+      direction = false;
       if (Find(main_message, "1", 10, 1))
       {
         Order = -1;
+        DC = true;
       }
       if (Find(main_message, "0", 10, 1))
       {
         Order = 0;
+        DC = false;
       }
       if (Find(main_message, "2", 10, 1))
       {
         Order = -2;
+        DC = true;
       }
       light_down(Order);
       light_up(Order);
@@ -482,7 +444,7 @@ void loop()
     time_check();
     if (Order == 0) {
       digitalWrite(led_down, LOW);
-      digitalWrite(led_up, LOW);
+      digitalWrite(led_up, LOW);fvf
     }
     else {
       digitalWrite(led_down, down_ledState);
