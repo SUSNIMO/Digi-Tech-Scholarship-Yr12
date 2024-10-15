@@ -86,7 +86,7 @@ void time_check()
   }
   else // Down light is supposed to be on
   {
-    if ((millis() - start_time) > (l_order * -1)) // Check if the time for Down light has passed
+    if ((millis() - start_time) > (l_order)) // Check if the time for Down light has passed
     {
       // Turn off Down light and turn on Up light
       up_ledState = true; 
@@ -112,11 +112,6 @@ void time_check()
       light_up(order);
       light_down(order);
     }
-    else
-    { 
-      light_up(Order);
-      light_down(Order);
-    }
   }
 }
 
@@ -127,13 +122,9 @@ void light_up(int time)
   {
     u_order = (time + 1) * 5000;
   }
-  if (time < 0)
+  if (time == 0 || time < 0)
   {
-    u_order = -1 * 5000;
-  }
-  if (time == 0)
-  {
-    u_order = 1 * 5000;
+    u_order = 5000;
   }
 }
 
@@ -142,11 +133,11 @@ void light_down(int time)
 {
   if (time > 0 || time == 0)
   {
-    l_order = -1 * 5000;
+    l_order = 5000;
   }
   if (time < 0)
   {
-    l_order = (time - 1) * 5000;
+    l_order = ((time - 1) * 5000) * -1;
   }
 }
 
@@ -230,6 +221,7 @@ void assign_order()
   //direct order from web
   if (Find(main_message, "04", 6, 2))
   {
+    compute = false;
     if (Find(main_message, "1", 9, 1))
     {
       direction = true;
