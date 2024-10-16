@@ -7,12 +7,13 @@
 std::string buffer;
 int order = 0;
 int Order = 0;
+int i;
 
 std::string main_message = "";
 
 //Lights pins
 int led_up = 26;
-int led_down = 27;
+int led_down = 27;  
 
 //Lights state
 bool up_ledState = false;
@@ -26,6 +27,7 @@ int send = 0;
 bool direction = false;
 
 bool compute = true;
+bool DC = false;
 int sensor1 = 0;
 int sensor2 = 0;
 int light = 0;
@@ -39,58 +41,26 @@ void update()
 {
   if ((millis() - send) > 100)
   {
-    if (compute)
+    if (compute || DC)
     {
-      if (order == 0)
+      if (up_ledState)
       {
-        broadcast("02-03-00-00-00-0404");
-        broadcast("02-03-00-00-00-0303");
-        //Serial.print("OFF");
+        broadcast("02-03-00-11-10-0404");
+        broadcast("02-03-00-11-10-0303");
       }
-      else
+      else 
       {
-        if (up_ledState)
-        {
-          broadcast("02-03-00-11-10-0404");
-          broadcast("02-03-00-11-10-0303");
-          //Serial.print("Up!");
-        }
-        else
-        {
-          broadcast("02-03-00-01-01-0404");
-          broadcast("02-03-00-01-01-0303");
-          //Serial.print("Down!");
-        }
+        broadcast("01-03-00-01-00-0404");
+        broadcast("01-03-00-01-00-0303");
       }
-      send = millis();
     }
     else
     {
-      if (Order == 0)
-      {
-        broadcast("02-03-00-00-00-0404");
-        broadcast("02-03-00-00-00-0303");
-        //Serial.print("OFF");
-      }
-      else
-      {
-        if (up_ledState)
-        {
-          broadcast("02-03-00-11-10-0404");
-          broadcast("02-03-00-11-10-0303");
-          //Serial.print("Up!");
-        }
-        else
-        {
-          broadcast("02-03-00-01-01-0404");
-          broadcast("02-03-00-01-01-0303");
-          //Serial.print("Down!");
-        }
-      }
-      send = millis();
+      broadcast("01-03-00-00-00-0404");
+      broadcast("01-03-00-00-00-0303");
     }
+    send = millis();
   }
-    
 }
 
 // Time checker for the lights
@@ -104,7 +74,8 @@ void time_check()
       up_ledState = false; 
       down_ledState = true;
       start_time = millis(); // Reset timer
-      direction = !direction; // Switch direction
+      direction = false; // Switch direction
+      i++;
     }
     else
     {
@@ -115,13 +86,14 @@ void time_check()
   }
   else // Down light is supposed to be on
   {
-    if ((millis() - start_time) > l_order) // Check if the time for Down light has passed
+    if ((millis() - start_time) > (l_order)) // Check if the time for Down light has passed
     {
       // Turn off Down light and turn on Up light
       up_ledState = true; 
       down_ledState = false;
       start_time = millis(); // Reset timer
-      direction = !direction; // Switch direction
+      direction = true; // Switch direction
+      i++;
     }
     else
     {
@@ -130,17 +102,16 @@ void time_check()
       down_ledState = true;
     }
   }
-}
 
-bool int_check(int number)
-{
-  if (number > 0)
+  if (i == 2)
   {
-    return 1 > 0;
-  }
-  if (number < 0)
-  {
-    return 1 < 0;
+    i = 0;
+    Compute();
+    if (compute)
+    {
+      light_up(order);
+      light_down(order);
+    }
   }
 }
 
@@ -149,13 +120,11 @@ void light_up(int time)
 {
   if (time > 0)
   {
-    u_order = time * 5000;
-    up_ledState = int_check(u_order);
+    u_order = (time + 1) * 5000;
   }
-  if (time < 0 || time == 0)
+  if (time == 0 || time < 0)
   {
-    u_order = -1 * 5000;
-    up_ledState = int_check(u_order);
+    u_order = 5000;
   }
 }
 
@@ -164,28 +133,30 @@ void light_down(int time)
 {
   if (time > 0 || time == 0)
   {
-    l_order = -1 * 5000;
-    down_ledState = int_check(l_order);
+    l_order = 5000;
   }
   if (time < 0)
   {
-    l_order = time * 5000;
-    down_ledState = int_check(l_order);
+    l_order = ((time - 1) * 5000) * -1;
   }
 }
 
 bool Find(const std::string& text, const std::string& search, int start, int length) {
-    if (start >= text.length() || length <= 0) {
+    if (start >= text.length() || length <= 0) 
+    {
         return false; // Invalid parameters
     }
     // Ensure length does not exceed the remaining text length
     length = std::min(length, static_cast<int>(text.length()) - start);
     
     size_t found = text.find(search, start);
-    if (found != std::string::npos && found + search.length() <= start + length) {
+    if (found != std::string::npos && found + search.length() <= start + length) 
+    {
         //Serial.print("Found '"); Serial.print(search.c_str()); Serial.print("' at position "); Serial.println(found);
         return true;
-    } else {
+    } 
+    else 
+    {
         //Serial.print("Did not find '"); Serial.print(search.c_str()); Serial.print("' within range starting at "); Serial.println(start);
         return false;
     }
@@ -193,7 +164,7 @@ bool Find(const std::string& text, const std::string& search, int start, int len
 
 void assign_compute()
 {
-  //data from sensor
+  //data from sensor on 2nd floor
   if (Find(main_message, "02", 0, 2))
   {
     if (Find(main_message, "01", 3, 2))
@@ -223,7 +194,7 @@ void assign_compute()
     }
   }
 
-  //data from traffic Light
+  //data from 1st light
   if (Find(main_message, "01", 0, 2))
   {
     if (Find(main_message, "03", 3, 2))
@@ -243,8 +214,6 @@ void assign_compute()
       
     }
   }
-
-  Compute();
 }
 
 void assign_order()
@@ -252,19 +221,24 @@ void assign_order()
   //direct order from web
   if (Find(main_message, "04", 6, 2))
   {
+    compute = false;
     if (Find(main_message, "1", 9, 1))
     {
+      direction = true;
       if (Find(main_message, "1", 10, 1))
       {
         Order = 1;
+        DC = true;
       }
       if (Find(main_message, "0", 10, 1))
       {
         Order = 0;
+        DC = false;
       }
       if (Find(main_message, "2", 10, 1))
       {
         Order = 2;
+        DC = true;
       }
       light_down(Order);
       light_up(Order);
@@ -273,17 +247,21 @@ void assign_order()
     }
     if (Find(main_message, "0", 9, 1))
     {
+      direction = false;
       if (Find(main_message, "1", 10, 1))
       {
         Order = -1;
+        DC = true;
       }
       if (Find(main_message, "0", 10, 1))
       {
         Order = 0;
+        DC = false;
       }
       if (Find(main_message, "2", 10, 1))
       {
         Order = -2;
+        DC = true;
       }
       light_down(Order);
       light_up(Order);
@@ -321,19 +299,11 @@ void message_verification(std::string message) //in a scenario if anyone tried t
     if (Find(message, "0203", 15, 4))
     {
       main_message = message;
-      if (Find(main_message, "04-04-04-", 0, 9))
+      if (Find(main_message, "04-04-04-", 0, 9) || Find(main_message, "04-04-03-", 0, 9))
       {
         assign_order();
       }
-      if (Find(main_message, "04-04-03-", 0, 9))
-      {
-        assign_order();
-      }
-      if (Find(main_message, "02-01-", 0, 6))
-      {
-        assign_compute();
-      }
-      if (Find(main_message, "01-03-00-", 0, 9))
+      if (Find(main_message, "01-01-", 0, 6) || Find(main_message, "04-02-00-", 0, 9))
       {
         assign_compute();
       }
@@ -464,18 +434,12 @@ void setup()
 
 void loop()
 {
-
   if (compute)
   {
     time_check();
-    if (order == 0) {
-      digitalWrite(led_down, LOW);
-      digitalWrite(led_up, LOW);
-    }
-    else {
-      digitalWrite(led_down, down_ledState);
-      digitalWrite(led_up, up_ledState);
-    }
+
+    digitalWrite(led_down, down_ledState);
+    digitalWrite(led_up, up_ledState);
   }
   else
   {
@@ -490,4 +454,13 @@ void loop()
     }
   }
   update();
+
+  Serial.print(Order);
+  Serial.print("-");
+  Serial.print(order);  
+  Serial.print("=");
+  Serial.print(compute);
+  Serial.print(":");
+  Serial.println(direction);
+  
 }

@@ -46,18 +46,18 @@ void update()
       if (up_ledState)
       {
         broadcast("01-03-00-11-10-0404");
-        broadcast("01-03-00-11-10-0103");
+        broadcast("01-03-00-11-10-0203");
       }
       else 
       {
         broadcast("01-03-00-01-00-0404");
-        broadcast("01-03-00-01-00-0103");
+        broadcast("01-03-00-01-00-0203");
       }
     }
     else
     {
       broadcast("01-03-00-00-00-0404");
-      broadcast("01-03-00-00-00-0103");
+      broadcast("01-03-00-00-00-0203");
     }
     send = millis();
   }
@@ -173,18 +173,18 @@ void assign_compute()
       {
         if (Find(main_message, "11", 9, 2))
         {
-          sensor1 = 1;
+          sensor1 = -1;
         }
         if (Find(main_message, "00", 9, 2))
         {
           sensor1 = 0;
         }
       }
-      if (Find(main_message, "11", 6, 2))
+      if (Find(main_message, "02", 6, 2))
       {
         if (Find(main_message, "01", 9, 2))
         {
-          sensor2 = -1;
+          sensor2 = 1;
         }
         if (Find(main_message, "00", 9, 2))
         {
