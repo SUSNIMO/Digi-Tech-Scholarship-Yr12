@@ -182,7 +182,7 @@ void assign_compute()
       }
       if (Find(main_message, "02", 6, 2))
       {
-        if (Find(main_message, "01", 9, 2))
+        if (Find(main_message, "11", 9, 2))
         {
           sensor2 = 1;
         }

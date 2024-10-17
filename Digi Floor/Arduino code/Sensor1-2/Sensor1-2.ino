@@ -22,13 +22,17 @@ int threshold = 60;
 
 void report(int message)
 {
-  if (message == 1)
+  if (message > 1)
   {
     broadcast("01-01-02-11-11-0103");
+    Serial.println("ON");
+    digitalWrite(led1, HIGH);
   }
   else 
   {
     broadcast("01-01-02-00-01-0103");
+    Serial.println("OFF");
+    digitalWrite(led1, LOW);
   }
 }
 
@@ -51,11 +55,13 @@ void sensor(int& led_status)
   // Convert to inches
   distanceInch = distanceCm * CM_TO_INCH;
 
-  if (distanceCm >= threshold ){
+  if (distanceCm <= threshold )
+  {
     digitalWrite(led, HIGH);
     led_status = 1;
   }
-  else {
+  else 
+  {
     digitalWrite(led, LOW);
     led_status = 0;
   }
@@ -73,16 +79,7 @@ void operations()
   delay(1000);
   digitalWrite(led1, LOW);
   order = (distance1 + distance2 + distance3);
-  if (order > 2)
-  {
-    digitalWrite(led1, HIGH);
-    report(1);
-  }
-  else
-  {
-    digitalWrite(led1, LOW);
-    report(0);
-  }
+  report(order);
 }
 
 void formatMacAddress(const uint8_t *macAddr, char *buffer, int maxLength)
@@ -102,7 +99,7 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
   char macStr[18];
   formatMacAddress(macAddr, macStr, 18);
   // debug log the message to the serial port
-  Serial.println(buffer);
+  //Serial.println(buffer);
   // what are our instructions
 }
 
@@ -111,10 +108,10 @@ void sentCallback(const uint8_t *macAddr, esp_now_send_status_t status)
 {
   char macStr[18];
   formatMacAddress(macAddr, macStr, 18);
-  Serial.print("Last Packet Sent to: ");
-  Serial.println(macStr);
-  Serial.print("Last Packet Send Status: ");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  //Serial.print("Last Packet Sent to: ");
+  //Serial.println(macStr);
+  //Serial.print("Last Packet Send Status: ");
+  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
 void broadcast(const String &message)
@@ -139,7 +136,7 @@ void broadcast(const String &message)
   esp_err_t result = esp_now_send(peerAddress, (const uint8_t *)message.c_str(), message.length());*/
   if (result == ESP_OK)
   {
-    Serial.println("Broadcast message success");
+    //Serial.println("Broadcast message success");
   }
   else if (result == ESP_ERR_ESPNOW_NOT_INIT)
   {
@@ -202,5 +199,4 @@ void setup()
 void loop()
 {
   operations();
-
 }
