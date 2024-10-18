@@ -173,18 +173,18 @@ void assign_compute()
       {
         if (Find(main_message, "11", 9, 2))
         {
-          sensor1 = 1;
+          sensor1 = -1;
         }
         if (Find(main_message, "00", 9, 2))
         {
           sensor1 = 0;
         }
       }
-      if (Find(main_message, "11", 6, 2))
+      if (Find(main_message, "02", 6, 2))
       {
-        if (Find(main_message, "01", 9, 2))
+        if (Find(main_message, "11", 9, 2))
         {
-          sensor2 = -1;
+          sensor2 = 1;
         }
         if (Find(main_message, "00", 9, 2))
         {
@@ -211,7 +211,6 @@ void assign_compute()
       {
         light = 1;
       }
-      
     }
   }
 }

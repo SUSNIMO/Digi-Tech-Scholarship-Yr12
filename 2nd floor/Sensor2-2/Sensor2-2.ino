@@ -24,13 +24,13 @@ void report(int message)
 {
   if (message > 1)
   {
-    broadcast("01-01-02-11-11-0103");
+    broadcast("02-01-02-11-11-0203");
     Serial.println("ON");
     digitalWrite(led1, HIGH);
   }
   else 
   {
-    broadcast("01-01-02-00-01-0103");
+    broadcast("02-01-02-00-01-0203");
     Serial.println("OFF");
     digitalWrite(led1, LOW);
   }
