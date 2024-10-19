@@ -46,18 +46,18 @@ void update()
       if (up_ledState)
       {
         broadcast("02-03-00-11-10-0404");
-        broadcast("02-03-00-11-10-0303");
+        broadcast("02-03-00-11-10-0403");
       }
       else 
       {
         broadcast("01-03-00-01-00-0404");
-        broadcast("01-03-00-01-00-0303");
+        broadcast("01-03-00-01-00-0403");
       }
     }
     else
     {
       broadcast("01-03-00-00-00-0404");
-      broadcast("01-03-00-00-00-0303");
+      broadcast("01-03-00-00-00-0403");
     }
     send = millis();
   }
@@ -164,8 +164,8 @@ bool Find(const std::string& text, const std::string& search, int start, int len
 
 void assign_compute()
 {
-  //data from sensor on 2nd floor
-  if (Find(main_message, "02", 0, 2))
+  //data from sensor on 3rd floor
+  if (Find(main_message, "03", 0, 2))
   {
     if (Find(main_message, "01", 3, 2))
     {
@@ -194,8 +194,8 @@ void assign_compute()
     }
   }
 
-  //data from 1st light
-  if (Find(main_message, "01", 0, 2))
+  //data from 2nd light
+  if (Find(main_message, "02", 0, 2))
   {
     if (Find(main_message, "03", 3, 2))
     {
@@ -295,14 +295,14 @@ void message_verification(std::string message) //in a scenario if anyone tried t
 {
   if (Find(message, "0", 12, 1) == Find(message, "0", 9, 1) || Find(message, "1", 12, 1) == Find(message, "1", 9, 1))
   {
-    if (Find(message, "0203", 15, 4))
+    if (Find(message, "0303", 15, 4))
     {
       main_message = message;
       if (Find(main_message, "04-04-04-", 0, 9) || Find(main_message, "04-04-03-", 0, 9))
       {
         assign_order();
       }
-      if (Find(main_message, "02-01-", 0, 6) || Find(main_message, "01-03-00-", 0, 9))
+      if (Find(main_message, "03-01-", 0, 6) || Find(main_message, "02-03-00-", 0, 9))
       {
         assign_compute();
       }
